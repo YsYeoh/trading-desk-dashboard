@@ -1,148 +1,190 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="300">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="120">
 <meta name="color-scheme" content="dark"><meta name="theme-color" content="#0B0F14">
-<title>Trading Desk · Live paper dashboard</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script><style>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='4' fill='%234F8CFF'/%3E%3C/svg%3E">
+<title>Trading Desk · Live paper terminal</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script><style>
 :root{--bg:#0B0F14;--sf:#121821;--sf2:#18202B;--bd:#232D3A;--bdh:#2E3A4A;--grid:#1C2430;--tx:#E6EDF3;--mu:#8B98A9;--fa:#5B6878;--ac:#4F8CFF;
 --up:#22C55E;--upt:#4ADE80;--dn:#F04452;--dnt:#FF6B78;--warn:#F5A524;--neu:#64748B;
---upbg:rgba(34,197,94,.12);--dnbg:rgba(240,68,82,.12);--warnbg:rgba(245,165,36,.12);
---sA:#4F8CFF;--sB:#A78BFA;--sC:#22D3EE;--sD:#F5A524}
+--upbg:rgba(34,197,94,.12);--dnbg:rgba(240,68,82,.12);--warnbg:rgba(245,165,36,.12);--acbg:rgba(79,140,255,.12)}
 *{box-sizing:border-box}[hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--tx);font:12px/1.4 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
 a{color:var(--ac);text-decoration:none}a:hover{text-decoration:underline}
 .num,.mono{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;font-feature-settings:"tnum";font-variant-numeric:tabular-nums}
-.wrap{max-width:1280px;margin:0 auto;padding:24px}
-.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
-.s3{grid-column:span 3}.s4{grid-column:span 4}.s6{grid-column:span 6}.s8{grid-column:span 8}.s12{grid-column:span 12}
-.label{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mu);font-weight:500}
-.muted{color:var(--mu)}.faint{color:var(--fa)}
-.pos{color:var(--upt)}.neg{color:var(--dnt)}.neu{color:var(--mu)}
-h1{font-size:16px;font-weight:600;margin:0;letter-spacing:-.005em}
-h2{font-size:20px;font-weight:600;margin:0;letter-spacing:-.01em}
-h3{font-size:16px;font-weight:600;margin:0}
-/* header */
-.hdr{position:sticky;top:0;z-index:50;background:rgba(18,24,33,.72);-webkit-backdrop-filter:saturate(140%) blur(12px);backdrop-filter:saturate(140%) blur(12px);border-bottom:1px solid var(--bd)}
-.hdr .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:12px;padding-bottom:12px}
-.brand{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0}
-.logo{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#4F8CFF,#A78BFA);display:grid;place-items:center;flex:none}
-.logo svg{width:16px;height:16px}
-.upd{font-size:12px;color:var(--mu);white-space:nowrap}
-.badge{font:600 11px/1 Inter,sans-serif;letter-spacing:.08em;padding:4px 8px;border-radius:999px;border:1px solid var(--warn);color:var(--warn);background:var(--warnbg)}
-.tabs{display:flex;background:var(--sf2);border:1px solid var(--bd);border-radius:10px;padding:3px;flex:none}
-.tabs a{padding:6px 14px;border-radius:7px;color:var(--mu);font-weight:500;font-size:13px;transition:color .15s,background .15s;text-decoration:none}
-.tabs a:hover{color:var(--tx)}
-.tabs a[aria-current=page]{background:var(--sf);color:var(--tx);box-shadow:inset 0 0 0 1px var(--bd)}
-/* cards */
-.card{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:18px;transition:border-color .15s;min-width:0}
-.card:hover{border-color:var(--bdh)}
-.fade{animation:up .45s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0) * 40ms)}
-@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.sec{margin-top:28px}
-.sechead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
-.sechead .sub{font-size:13px;color:var(--mu)}
-.kpi{font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.15;margin-top:6px;white-space:nowrap}
-.hero{font-size:40px;font-weight:700;letter-spacing:-.03em;line-height:1.1;margin:8px 0 6px}
-.chip{display:inline-flex;align-items:center;gap:6px;font:600 11px/1 Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:5px 8px;border-radius:999px;border:1px solid var(--bd);color:var(--mu);white-space:nowrap}
-.chip.long{color:var(--upt);border-color:rgba(34,197,94,.45);background:var(--upbg)}
-.chip.short{color:var(--dnt);border-color:rgba(240,68,82,.45);background:var(--dnbg)}
-.chip.reject{color:var(--dnt);border-color:var(--dn);background:transparent}
-.chip.skip{color:var(--mu);border-color:var(--neu);background:transparent}
-.chip.warn{color:var(--warn);border-color:rgba(245,165,36,.5);background:var(--warnbg)}
+.lbl{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--mu);font-weight:500;white-space:nowrap}
+.mu{color:var(--mu)}.fa{color:var(--fa)}.pos{color:var(--upt)}.neg{color:var(--dnt)}.neu{color:var(--mu)}.wrn{color:var(--warn)}
+b{font-weight:600}
+/* terminal frame */
+.term{display:flex;flex-direction:column;gap:6px;padding:6px;min-height:100vh}
+.hdr{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:10px;height:36px;padding:0 10px;margin:-6px -6px 0;
+ background:rgba(18,24,33,.78);-webkit-backdrop-filter:saturate(140%) blur(12px);backdrop-filter:saturate(140%) blur(12px);border-bottom:1px solid var(--bd)}
+.logo{width:20px;height:20px;border-radius:5px;background:linear-gradient(135deg,#4F8CFF,#A78BFA);display:grid;place-items:center;flex:none}
+.logo svg{width:12px;height:12px}
+.hdr h1{font-size:13px;font-weight:600;margin:0;white-space:nowrap}
+.badge{font:600 10px/1 Inter,sans-serif;letter-spacing:.08em;padding:3px 6px;border-radius:999px;border:1px solid var(--warn);color:var(--warn);background:var(--warnbg)}
+.hdr .meta{display:flex;align-items:center;gap:12px;color:var(--mu);font-size:11px;white-space:nowrap;overflow:hidden;min-width:0}
+.hdr .meta .sep{color:var(--bd)}
+.tabs{display:flex;background:var(--sf2);border:1px solid var(--bd);border-radius:6px;padding:2px;margin-left:auto;flex:none}
+.tabs a{padding:3px 12px;border-radius:4px;color:var(--mu);font-weight:500;font-size:12px;transition:color .15s,background .15s;text-decoration:none}
+.tabs a:hover{color:var(--tx)}.tabs a[aria-current=page]{background:var(--sf);color:var(--tx);box-shadow:inset 0 0 0 1px var(--bd)}
+/* panels */
+.pn{background:var(--sf);border:1px solid var(--bd);border-radius:6px;display:flex;flex-direction:column;min-width:0;min-height:0;transition:border-color .15s}
+.pn:hover{border-color:var(--bdh)}
+.ph{display:flex;align-items:center;gap:8px;min-height:28px;padding:4px 10px;border-bottom:1px solid var(--bd);flex:none}
+.ph h2{font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin:0;color:var(--tx);white-space:nowrap}
+.ph .r{margin-left:auto;display:flex;gap:8px;align-items:center;color:var(--fa);font-size:10.5px;white-space:nowrap;overflow:hidden}
+.pb{flex:1;min-height:0;overflow:auto}
+.pad{padding:8px 10px}
+/* strips */
+.strip{display:flex;align-items:stretch;background:var(--sf);border:1px solid var(--bd);border-radius:6px;overflow-x:auto;scrollbar-width:thin}
+.cell{padding:5px 12px;border-right:1px solid var(--grid);min-width:0;flex:none;display:flex;flex-direction:column;justify-content:center;gap:1px}
+.cell:last-child{border-right:0}
+.cell .v{font-size:15px;font-weight:600;white-space:nowrap;line-height:1.25}
+.cell .s{font-size:10.5px;color:var(--mu);white-space:nowrap}
+.cell.big .v{font-size:20px;font-weight:700;letter-spacing:-.02em}
+.striphead{writing-mode:horizontal-tb;display:flex;align-items:center;padding:0 10px;font:600 10px Inter;letter-spacing:.1em;color:var(--mu);border-right:1px solid var(--bd);background:var(--sf2);flex:none;white-space:nowrap}
+.fade{animation:up .35s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0) * 30ms)}
+@keyframes up{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* chips */
+.chip{display:inline-flex;align-items:center;gap:4px;font:600 9.5px/1 Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:3px 5px;border-radius:4px;border:1px solid var(--bd);color:var(--mu);white-space:nowrap;vertical-align:middle}
+.chip.long,.chip.pass,.chip.bull,.chip.ok{color:var(--upt);border-color:rgba(34,197,94,.45);background:var(--upbg)}
+.chip.short,.chip.bear{color:var(--dnt);border-color:rgba(240,68,82,.45);background:var(--dnbg)}
+.chip.reject{color:var(--dnt);border-color:var(--dn)}
+.chip.skip,.chip.expired{color:var(--mu);border-color:var(--neu)}
+.chip.warn,.chip.reduce,.chip.pending,.chip.unv{color:var(--warn);border-color:rgba(245,165,36,.5);background:var(--warnbg)}
+.chip.open,.chip.rep,.chip.oos{color:var(--ac);border-color:rgba(79,140,255,.5);background:var(--acbg)}
 .chip.is{color:var(--mu);border-color:var(--neu)}
-.chip.oos{color:var(--ac);border-color:rgba(79,140,255,.5);background:rgba(79,140,255,.10)}
+.feed{display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--fa);white-space:nowrap}
+.feed i{width:6px;height:6px;border-radius:50%;background:var(--neu);display:inline-block;font-style:normal}
+.feed.on i{background:var(--up)}.feed.stale i{background:var(--warn)}.feed.on{color:var(--mu)}
 /* tables */
-.tbl{position:relative;border:1px solid var(--bd);border-radius:14px;background:var(--sf);overflow:hidden}
-.tbl .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{position:sticky;top:0;background:var(--sf2);color:var(--mu);font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;text-align:left;padding:10px 14px;white-space:nowrap;border-bottom:1px solid var(--bd)}
-td{height:40px;padding:8px 14px;border-bottom:1px solid var(--grid);vertical-align:middle;white-space:nowrap}
-tr:last-child td{border-bottom:0}
-tbody tr{transition:background .15s}
-tbody tr:hover td{background:var(--sf2)}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:11.5px}
+th{position:sticky;top:0;z-index:2;background:var(--sf2);color:var(--mu);font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;text-align:left;padding:5px 8px;white-space:nowrap;border-bottom:1px solid var(--bd)}
+td{padding:4px 8px;border-bottom:1px solid var(--grid);vertical-align:top;white-space:nowrap;height:28px}
+tbody tr{transition:background .15s}tbody tr:hover td{background:var(--sf2)}
 td.r,th.r{text-align:right}
-td.wrapc{white-space:normal;min-width:320px;color:var(--mu);line-height:1.45}
+td.w{white-space:normal;min-width:180px;max-width:300px;color:var(--mu);line-height:1.35}
+td.w.xl{min-width:260px;max-width:420px}
+.sub{display:block;font-size:10.5px;color:var(--fa);white-space:normal;line-height:1.3}
 tr.win td:first-child{box-shadow:inset 2px 0 0 var(--up)}
 tr.loss td:first-child{box-shadow:inset 2px 0 0 var(--dn)}
-.muted-tbl td{color:var(--mu)}.muted-tbl td.tk{color:var(--tx)}
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:36px 20px;color:var(--mu)}
-.empty .ico{width:40px;height:40px;border-radius:12px;background:var(--sf2);border:1px solid var(--bd);display:grid;place-items:center;margin-bottom:6px}
-.empty b{color:var(--tx);font-weight:600;font-size:14px}
-.empty p{margin:0;max-width:420px;font-size:13px}
-footer{margin-top:36px;padding:20px 0 8px;border-top:1px solid var(--bd);display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--fa);font-size:12px}
-@media(max-width:900px){
- .wrap{padding:16px}
- .s3,.s4,.s6,.s8,.s12{grid-column:1/-1}
- .kpi{font-size:22px}.hero{font-size:32px}
- .upd .long{display:none}
- .tbl th:first-child,.tbl td:first-child{position:sticky;left:0;z-index:2;background:var(--sf)}
- .tbl th:first-child{z-index:3;background:var(--sf2)}
- .tbl tbody tr:hover td:first-child{background:var(--sf2)}
- .tbl::after{content:"";position:absolute;top:0;right:0;bottom:0;width:28px;pointer-events:none;background:linear-gradient(90deg,rgba(18,24,33,0),var(--sf));border-radius:0 14px 14px 0}
+tr.opn td:first-child{box-shadow:inset 2px 0 0 var(--ac)}
+tr.pnd td:first-child{box-shadow:inset 2px 0 0 var(--warn)}
+.muted-rows td{color:var(--mu)}
+.empty{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 10px;color:var(--fa);font-size:11.5px;text-align:center}
+.empty b{color:var(--mu);font-weight:600}
+.nf{color:var(--fa);font-size:10.5px;font-style:italic}
+.seg{display:flex;gap:2px}
+.seg button{font:500 10.5px Inter,sans-serif;letter-spacing:.04em;color:var(--mu);background:none;border:1px solid transparent;border-radius:4px;padding:2px 8px;cursor:pointer;transition:color .15s,background .15s;white-space:nowrap}
+.seg button[aria-selected=true],.seg button[aria-pressed=true]{background:var(--sf2);color:var(--tx);border-color:var(--bd)}
+.seg button:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+.caveat{background:var(--warnbg);border:1px solid var(--warn);border-left-width:4px;border-radius:6px;padding:6px 10px;font-size:11.5px;color:#D9C9A8}
+.caveat b{color:var(--warn)}
+footer{display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--fa);font-size:10.5px;padding:2px 4px}
+footer .r{margin-left:auto}
+.flash-up{animation:fu 1s ease}.flash-dn{animation:fd 1s ease}
+@keyframes fu{from{background:rgba(34,197,94,.28)}to{background:transparent}}
+@keyframes fd{from{background:rgba(240,68,82,.28)}to{background:transparent}}
+@media(max-width:760px){
+ .hdr{height:auto;flex-wrap:wrap;padding:6px 10px;row-gap:4px}.hdr .meta{order:3;width:100%;flex-wrap:wrap;row-gap:2px}.hdr .meta .opt{display:none}
+ .tabs{margin-left:auto}
+ .pb.tbl td:first-child,.pb.tbl th:first-child{position:sticky;left:0;z-index:1;background:var(--sf)}
+ .pb.tbl th:first-child{z-index:3;background:var(--sf2)}
+ .cell.big .v{font-size:18px}
+ .strip .lbl{white-space:normal}
 }
-@media(max-width:560px){
- .hdr .wrap{flex-wrap:wrap;row-gap:8px}
- .tabs{order:3;width:100%}.tabs a{flex:1;text-align:center}
-}
-@media(prefers-reduced-motion:reduce){
- *,*::before,*::after{animation:none!important;transition:none!important}
-}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 
-.chart-note{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mu);background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:6px 10px;margin-bottom:10px;align-self:flex-start}
-.dotn{width:6px;height:6px;border-radius:50%;background:var(--neu);flex:none}
-.chart-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;pointer-events:none;color:var(--mu);font-size:13px;text-align:center;padding-top:16%}
-.chart-empty b{color:var(--tx);font-weight:600;font-size:14px;background:rgba(18,24,33,.85);padding:2px 8px;border-radius:6px}
-.chart-empty span{background:rgba(18,24,33,.85);padding:0 8px;border-radius:6px}
-.otc{display:flex;flex-direction:column;gap:12px}
-.otgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:13px}
-.otgrid .label{display:block;font-size:11px;margin-bottom:2px;font-family:Inter,sans-serif}
-.otmeta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--mu)}.otmeta b{color:var(--tx);font-weight:500}
-.range{position:relative;height:6px;border-radius:3px;margin:8px 0 0;background:linear-gradient(90deg,var(--dn) 0 var(--e),var(--up) var(--e) 100%)}
+@media(min-width:1200px) and (min-height:680px){
+ body.fit{height:100vh;overflow:hidden}
+ body.fit .term{height:100vh;min-height:0}
+ body.fit .main{flex:1;min-height:0}
+}
+.strips{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:6px}
+@media(max-width:1699px){.strips{grid-template-columns:minmax(0,1fr)}}
+.strip .cell.grow{flex:1 1 240px}.strip .cell.grow .s{white-space:normal}
+.kpis .cell{flex:1 1 auto}
+.main{display:grid;grid-template-columns:minmax(380px,23%) minmax(0,1fr) minmax(300px,18%);grid-template-areas:"w c p";gap:6px;min-height:0}
+.p-watch{grid-area:w}.center{grid-area:c}.p-pos{grid-area:p}
+.center{display:grid;grid-template-rows:minmax(150px,28%) minmax(0,1fr);gap:6px;min-height:0;min-width:0}
+@media(min-width:1200px) and (max-width:1599px){
+ .main{grid-template-columns:330px minmax(0,1fr);grid-template-rows:minmax(0,1.25fr) minmax(0,1fr);grid-template-areas:"w c" "p c"}
+ .wl-opt{display:none}
+}
+.p-chart .pb{min-height:150px}
+tr.grp td{background:var(--bg);color:var(--fa);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;height:20px;padding:3px 8px;border-bottom:1px solid var(--bd)}
+tr.grp:hover td{background:var(--bg)}
+.p-watch table{font-size:11px}.p-watch td{vertical-align:middle;padding:4px 5px}.p-watch th{padding:5px 5px}
+.poscard{background:var(--sf2);border:1px solid var(--bd);border-radius:6px;padding:8px 10px;display:flex;flex-direction:column;gap:6px;transition:border-color .15s}
+.poscard:hover{border-color:var(--bdh)}.poscard.pend{border-style:dashed}
+.pc-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.pc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;font-size:11.5px}
+.pc-grid i{display:block;font:500 9.5px Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--mu)}
+.pc-cap{display:flex;justify-content:space-between;gap:8px;font-size:10.5px;flex-wrap:wrap}
+.range{position:relative;height:6px;border-radius:3px;margin:4px 0 2px;background:linear-gradient(90deg,var(--dn) 0 var(--e),var(--up) var(--e) 100%)}
 .range .entry{position:absolute;left:var(--e);top:-4px;width:2px;height:14px;margin-left:-1px;background:var(--tx);border-radius:1px}
-.range .dot{position:absolute;left:var(--p);top:50%;width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px var(--sf);transform:translate(-50%,-50%);animation:slide .5s cubic-bezier(.2,.7,.2,1) .2s both}
+.range .dot{position:absolute;left:var(--p);top:50%;width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px var(--sf2);transform:translate(-50%,-50%);animation:slide .5s cubic-bezier(.2,.7,.2,1) .2s both;transition:left .5s ease}
 @keyframes slide{from{left:var(--e)}to{left:var(--p)}}
-details.note summary{cursor:pointer;color:var(--mu);font-size:12px;list-style:none}
-details.note summary::before{content:"▸ ";color:var(--fa)}details.note[open] summary::before{content:"▾ "}
-details.note p{margin:6px 0 0;font-size:12px;color:var(--mu);line-height:1.5}
-@media(max-width:900px){.chartbox{height:220px!important}.kpis>:last-child:nth-child(odd){grid-column:1/-1}td.wrapc{min-width:260px}}
+.p-ledger td.w{min-width:150px;max-width:220px}
+.p-ledger td.w.xl{min-width:260px;max-width:380px}
+@media(max-width:1199px){
+ .main{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"w p" "c c"}
+ .center{grid-template-rows:240px auto}
+ .p-watch,.p-pos{max-height:520px}
+ .p-ledger .pb{max-height:560px}
+}
+@media(max-width:760px){
+ .main{grid-template-columns:minmax(0,1fr);grid-template-areas:"p" "w" "c"}
+ .p-watch,.p-pos{max-height:none}
+ .center{grid-template-rows:220px auto}
+ .kpis{flex-wrap:wrap}.kpis .cell{flex:1 1 45%;border-bottom:1px solid var(--grid)}.kpis .cell.big{flex-basis:100%}
+ .strip.risk,.strip.cats{flex-wrap:wrap}.strip.risk .cell,.strip.cats .cell{flex:1 1 100%;border-right:0;border-bottom:1px solid var(--grid);white-space:normal}
+ .strip .cell .s{white-space:normal}
+ .striphead{flex-basis:100%;padding:4px 10px;border-right:0;border-bottom:1px solid var(--bd)}
+ .ph{flex-wrap:wrap}.ph .r{margin-left:0;flex-wrap:wrap;white-space:normal}
+ .pb.tbl{overflow-x:auto}
+}
 </style></head>
-<body><header class="hdr"><div class="wrap"><div class="brand"><span class="logo" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l4-4 3 3 5-6"/><path d="M10 5h4v4"/></svg></span><h1>Trading Desk</h1><span class="badge" title="Paper trading only. No real orders.">PAPER</span><span class="upd">Updated 3:23 PM AWST · Sat 10 Oct 2026<span class="long"> · from paper-ledger.csv</span></span></div><nav class="tabs" aria-label="Dashboards"><a href="index.html" aria-current=page>Live</a><a href="backtest.html">Backtest</a></nav></div></header><main class="wrap"><div class="grid"><section class="card s4 fade" style="--i:1"><div class="label">Paper balance</div>
-<div class="hero num" data-to="10000.00" data-fmt="money">$10,000.00</div>
-<div class="neu num" style="font-size:14px;font-weight:600">± 0.00% <span class="muted" style="font-weight:400">vs $10,000 start</span></div>
-<div class="faint" style="font-size:12px;margin-top:14px">Realized ± $0.00 · Unrealized ± $0.00</div></section><div class="s8 kpis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px"><div class="card fade" style="--i:2"><div class="label">Realized P&amp;L</div><div class="kpi num neu" data-to="0.00" data-fmt="smoney">± $0.00</div><div class="muted" style="font-size:12px;margin-top:4px">0 closed trades</div></div><div class="card fade" style="--i:3"><div class="label">Unrealized P&amp;L</div><div class="kpi num neu" data-to="0.00" data-fmt="smoney">± $0.00</div><div class="muted" style="font-size:12px;margin-top:4px">2 open · marked from ledger</div></div><div class="card fade" style="--i:4"><div class="label">Win rate</div><div style="display:flex;align-items:center;gap:12px;margin-top:6px"><svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="flex:none"><circle cx="20" cy="20" r="15" fill="none" stroke="#232D3A" stroke-width="4"/><circle class="ringv" cx="20" cy="20" r="15" fill="none" stroke="#232D3A" stroke-width="4" stroke-linecap="round" stroke-dasharray="0.00 94.25" transform="rotate(-90 20 20)"/></svg><div class="kpi num" style="margin:0" >—</div></div><div class="muted" style="font-size:12px;margin-top:4px">No closed trades yet</div></div><div class="card fade" style="--i:5"><div class="label">Avg win vs loss</div><div class="kpi num" style="font-size:20px;margin-top:10px"><span class="pos">—</span><span class="faint"> / </span><span class="neg">—</span></div><div class="muted" style="font-size:12px;margin-top:4px">Ratio appears after a win and a loss</div></div><div class="card fade" style="--i:6"><div class="label">Trades</div><div class="kpi num" data-to="2" data-fmt="int">2</div><div class="muted" style="font-size:12px;margin-top:4px">2 open · 0 closed · 4 passed</div></div></div></div>
-<div class="grid sec"><section class="card s8 fade" style="--i:7;display:flex;flex-direction:column">
-<div class="sechead" style="margin-bottom:8px"><h3>Paper balance over time</h3><span class="sub">Dashed line: $10,000 start</span></div>
-<div class="chart-note"><span class="dotn"></span>No closed trades yet. The curve starts moving once a paper trade closes.</div>
-<div class="chartbox" style="position:relative;height:320px">
-<canvas id="bal" aria-label="Paper balance over time" role="img"></canvas>
-</div></section><section class="s4" style="display:flex;flex-direction:column;gap:16px;min-width:0"><div class="sechead" style="margin:0"><h3>Open trades</h3><span class="sub">2 open</span></div><article class="card otc fade" style="--i:8">
-<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:16px;font-weight:700">STRK</span><span class="chip long">LONG</span>
-<span class="mono faint" style="font-size:12px">#L002</span></div>
-<div class="otgrid mono"><div><span class="label">Entry</span>0.0710</div><div><span class="label">Stop</span><span class="neg">0.0680</span></div><div><span class="label">Target</span><span class="pos">0.0830</span></div></div>
-<div class="range" style="--e:20.00%;--p:20.00%" role="img" aria-label="At entry · 0% of the way to target"><span class="entry"></span><span class="dot"></span></div><div style="display:flex;justify-content:space-between;font-size:11px;margin-top:-4px" class="mono"><span class="neg">SL 0.0680</span><span class="pos">TP 0.0830</span></div><div style="font-size:12px;color:var(--tx);margin-top:-6px">At entry · 0% of the way to target</div>
-<div class="otmeta"><span>Size <b class="mono">$250</b></span><span>Risk <b class="mono">$10.56</b></span><span>R:R <b class="mono">4.0</b></span><span>Unrealized <b class="mono neu">± $0.00</b></span></div>
-<div class="faint" style="font-size:11px;margin-top:2px">No mark yet, so the dot sits at entry. Opened 2026-10-10.</div>
-<details class="note"><summary>Desk note</summary><p>PAPER BUY by Yong Sen 13:47 MYT on Skeptic REDUCE terms. Filled at market 0.0710 (Charts, Binance 13:46 MYT; limit 0.0730 was above market); fill signed off by The Skeptic 14:10 MYT under the auto-trade dry run. Risk ~$10.56. Off watchlist. 15 Oct ~127M STRK unlock inside the hold.</p></details>
-</article><article class="card otc fade" style="--i:9">
-<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:16px;font-weight:700">CCI</span><span class="chip long">LONG</span>
-<span class="mono faint" style="font-size:12px">#L003</span></div>
-<div class="otgrid mono"><div><span class="label">Entry</span>77.30</div><div><span class="label">Stop</span><span class="neg">76.40</span></div><div><span class="label">Target</span><span class="pos">80.60</span></div></div>
-<div class="range" style="--e:21.43%;--p:21.43%" role="img" aria-label="At entry · 0% of the way to target"><span class="entry"></span><span class="dot"></span></div><div style="display:flex;justify-content:space-between;font-size:11px;margin-top:-4px" class="mono"><span class="neg">SL 76.40</span><span class="pos">TP 80.60</span></div><div style="font-size:12px;color:var(--tx);margin-top:-6px">At entry · 0% of the way to target</div>
-<div class="otmeta"><span>Size <b class="mono">$250</b></span><span>Risk <b class="mono">$2.91</b></span><span>R:R <b class="mono">3.7</b></span><span>Unrealized <b class="mono neu">± $0.00</b></span></div>
-<div class="faint" style="font-size:11px;margin-top:2px">No mark yet, so the dot sits at entry. Opened 2026-10-10.</div>
-<details class="note"><summary>Desk note</summary><p>Auto-opened in the dry run on Skeptic REDUCE ($250). Buy limit 77.30; fills only if CCI trades at or below 77.30 (Friday close $79.64). Off watchlist. Q3 earnings 21 Oct inside the hold; Dish lease-claim mediation runs to 4 Nov. Skeptic conditions: the limit expires at the Mon 12 Oct 4:00 PM ET close (cancel and log as expired if unfilled); if filled, close by the 20 Oct close before earnings.</p></details>
-</article></section></div>
-<section class="sec"><div class="sechead"><h2>Closed trades</h2><span class="sub">0 closed · R = P&amp;L ÷ planned risk</span></div><div class="card"><div class="empty"><div class="ico">☰</div><b>No closed trades yet</b><p>Each closed paper trade shows up here with its lead ID, R multiple and P&amp;L. Win rate and average win vs loss fill in from these.</p></div></div></section>
-<section class="sec" style="opacity:.92"><div class="sechead"><h2>Passed ideas</h2><span class="sub">4 reject · 0 skip · most of the job is passing</span></div><div class="tbl muted-tbl"><div class="scroll"><table><thead><tr><th>Lead</th><th>Ticker</th><th>Verdict</th><th>Date</th><th>Reason</th></tr></thead><tbody><tr><td class="mono">#L001</td><td class="tk"><b>KAIA</b></td><td><span class="chip reject">Reject</span></td><td class="mono">2026-10-10</td><td class="wrapc">Skeptic REJECT: +62.3% on 13.7x vol right after the Upbit listing looks like sell-the-news; heavy Telegram signal spam and new accounts posting profit claims. Ref $0.0610 (Scout, CoinGecko 09:52 AWST).</td></tr><tr><td class="mono">#L004</td><td class="tk"><b>TMUS</b></td><td><span class="chip reject">Reject</span></td><td class="mono">2026-10-10</td><td class="wrapc">Skeptic REJECT: falling knife at a fresh 1-year low with no support in the data; Charts found no setup. Ref $148.58, -13.3% (Scout, Yahoo).</td></tr><tr><td class="mono">#L005</td><td class="tk"><b>ASTS</b></td><td><span class="chip reject">Reject</span></td><td class="mono">2026-10-10</td><td class="wrapc">Skeptic REJECT: counter-trend after losing the spectrum to SpaceX; the Roth $108 target came before the news; heavy pump-group hype. Ref $50.97, -10.5% (Scout, Yahoo).</td></tr><tr><td class="mono">#TEST</td><td class="tk"><b>AAPL</b></td><td><span class="chip reject">Reject</span></td><td class="mono">2026-10-10</td><td class="wrapc">Test lead with no Scout ID. Skeptic REJECT: &#x27;$500 buyout tomorrow&#x27; X rumor had no source, no 8-K and no posts repeating it. Ref close $336.64, -1.11% (Scout, Yahoo).</td></tr></tbody></table></div></div></section><footer><span class="badge">PAPER</span><span>Paper trading only. No real orders are placed. Source: desk/paper-ledger.csv.</span><span style="margin-left:auto">Page refreshes every 5 minutes · Built 3:23 PM AWST · Sat 10 Oct 2026</span></footer></main>
+<body class="fit"><div class="term"><header class="hdr"><span class="logo" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l4-4 3 3 5-6"/><path d="M10 5h4v4"/></svg></span><h1>Trading Desk</h1><span class="badge" title="Paper trading only. No real orders.">PAPER</span><div class="meta"><span>Updated <b class="mono" style="color:var(--tx);font-weight:500"><!--ts-->4:25 PM AWST · Sat 10 Oct<!--/ts--></b></span><span class="opt sep">|</span><span class="opt">from paper-ledger.csv + desk feeds</span><span class="opt sep">|</span><span class="opt">balance $10,000 · daily limit 2% · 3 cards/day</span></div><nav class="tabs" aria-label="Dashboards"><a href="index.html" aria-current=page>Live</a><a href="backtest.html">Backtest</a></nav></header><section class="strip kpis" aria-label="Key figures"><div class="cell big fade" style="--i:1"><span class="lbl">Paper balance</span><span class="v"><span class="num" id="k-bal" data-to="9994.23" data-fmt="money">$9,994.23</span></span><span class=s><span class="num neg" id="k-chg">▼ −0.06%</span> vs $10,000</span></div><div class="cell  fade" style="--i:2"><span class="lbl">Realized P&amp;L</span><span class="v"><span class="num neu">± $0.00</span></span><span class=s>0 closed</span></div><div class="cell  fade" style="--i:3"><span class="lbl">Unrealized P&amp;L</span><span class="v"><span class="num neg" id="k-unr">▼ −$5.77</span></span><span class=s>1 open · <span id="k-unr-src">marked at build</span></span></div><div class="cell  fade" style="--i:4"><span class="lbl">Win rate</span><span class="v"><span style="display:inline-flex;align-items:center;gap:6px"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7" fill="none" stroke="#232D3A" stroke-width="2.5"/><circle cx="9" cy="9" r="7" fill="none" stroke="#F5A524" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="0.00 43.98" transform="rotate(-90 9 9)"/></svg><span class="num">—</span></span></span><span class=s>no closed trades</span></div><div class="cell  fade" style="--i:5"><span class="lbl">Avg win / avg loss</span><span class="v"><span class="num"><span class="pos">—</span> <span class="fa">/</span> <span class="neg">—</span></span></span><span class=s>needs a win and a loss</span></div><div class="cell  fade" style="--i:6"><span class="lbl">Trades</span><span class="v"><span class="num">2</span></span><span class=s>1 open · 1 pending · 0 closed · 4 passed</span></div></section><div class="strips"><section class="strip risk" aria-label="Risk"><div class="striphead">RISK</div><div class="cell"><span class="lbl">Day realized vs 2% limit</span><span class="v num neu">± $0.00 <span class="fa" style="font-size:11px">/ −$200</span></span><span style="display:block;width:120px;height:4px;border-radius:2px;background:var(--grid);margin-top:3px"><span style="display:block;height:4px;border-radius:2px;width:0%;background:var(--neu)"></span></span></div><div class="cell"><span class="lbl">Open risk to stops</span><span class="v num" id="k-risk">$4.79</span><span class="s">planned $10.56 · +$2.91 if pending fill</span></div><div class="cell" title="Cards = today's ledger rows that reached Yong Sen (trades and SKIPs). Skeptic REJECTs never became cards."><span class="lbl">Cards today</span><span class="v num ">2 <span class="fa" style="font-size:11px">/ 3</span></span><span style="display:block;width:120px;height:4px;border-radius:2px;background:var(--grid);margin-top:3px"><span style="display:block;height:4px;border-radius:2px;width:67%;background:var(--ac)"></span></span></div><div class="cell grow"><span class="lbl">Pending · <span class="mono">#L003</span></span><span class="v" style="font-size:13px"><b>CCI</b> <span class="mono">limit 77.30</span> · <span class="mono" data-until="2026-10-13T04:00:00+08:00"></span></span><span class="s">expires Tue 13 Oct 4:00 AM AWST (Mon 4:00 PM ET) · last 79.64, 3.0% above limit</span></div></section><section class="strip cats" aria-label="Upcoming catalysts"><div class="striphead">CATALYSTS</div><div class="cell"><span class="lbl"><span class="mono">STRK</span> · #L002 · <span class="wrn">in a live trade</span></span>
+<span class="v" style="font-size:12.5px;font-weight:500"><a href="https://docs.starknet.io/learn/protocol/strk" target="_blank" rel="noopener">127M STRK unlock (1.27% supply)</a></span>
+<span class="s"><span class="mono wrn">Thu 15 Oct</span> · in 5d</span></div><div class="cell"><span class="lbl"><span class="mono">CCI</span> · #L003 · <span class="wrn">in a live trade</span></span>
+<span class="v" style="font-size:12.5px;font-weight:500"><a href="https://www.ad-hoc-news.de/boerse/news/corporate-news/crown-castle-stock-heads-toward-october-21-results-on-nyse/70227577" target="_blank" rel="noopener">Q3 earnings</a></span>
+<span class="s"><span class="mono ">Wed 21 Oct</span> · in 11d</span></div></section></div>
+<div class="main"><section class="pn p-watch fade" style="--i:7"><div class="ph"><h2>Watchlist</h2><div class="r"><span id="livets" class="feed" title="Crypto rows refresh every 15s from Binance public REST"><i></i>crypto live: connecting…</span></div></div>
+<div class="pb tbl"><table><thead><tr><th>Sym</th><th class="r">Last</th><th class="r">Chg</th><th class="r" title="Volume vs 30-day average (stocks: last session; crypto: 24h quote volume)">Vol×30d</th><th class="r wl-opt">30d</th><th class="r wl-opt" title="Scout: distance to the move trigger · distance to 2× volume">Trigger Δ</th></tr></thead><tbody><tr class="grp"><td colspan="6">Watchlist · my-rules.md</td></tr><tr title="Yahoo chart API · as of Sat 10 Oct 4:00 AM AWST"><td><b class="mono">NVDA</b></td><td class="r mono" data-f="px">229.28</td><td class="r mono neg" data-f="pct">▼ −0.52%</td><td class="r mono mu" data-f="vr">0.69×</td><td class="r wl-opt"><svg width="46" height="16" viewBox="0 0 46 16" aria-hidden="true"><polyline points="1.0,11.7 2.5,10.1 4.0,11.8 5.6,8.3 7.1,6.3 8.6,5.4 10.1,7.7 11.6,8.7 13.1,11.3 14.7,11.4 16.2,15.0 17.7,14.4 19.2,13.5 20.7,10.9 22.2,9.4 23.8,6.9 25.3,6.1 26.8,7.8 28.3,8.3 29.8,8.0 31.3,6.1 32.9,7.0 34.4,6.4 35.9,5.1 37.4,3.6 38.9,1.2 40.4,1.0 42.0,1.9 43.5,5.3 45.0,5.9" fill="none" stroke="#4ADE80" stroke-width="1.2"/></svg></td><td class="r mono mu wl-opt" title="Scout · move trigger 5.0% · distance to move / to 2× volume · checked 2026-10-10 16:12 AWST">4.5%<span class="fa">·</span>1.31×</td></tr><tr title="Yahoo chart API · as of Sat 10 Oct 4:00 AM AWST"><td><b class="mono">AAPL</b></td><td class="r mono" data-f="px">336.64</td><td class="r mono neg" data-f="pct">▼ −1.11%</td><td class="r mono mu" data-f="vr">0.93×</td><td class="r wl-opt"><svg width="46" height="16" viewBox="0 0 46 16" aria-hidden="true"><polyline points="1.0,12.6 2.5,14.2 4.0,9.7 5.6,9.8 7.1,8.0 8.6,12.5 10.1,14.5 11.6,15.0 13.1,8.9 14.7,5.8 16.2,5.3 17.7,6.3 19.2,5.7 20.7,3.2 22.2,3.7 23.8,2.1 25.3,1.7 26.8,3.2 28.3,3.8 29.8,1.0 31.3,2.5 32.9,7.3 34.4,5.4 35.9,6.8 37.4,5.0 38.9,5.5 40.4,5.0 42.0,3.4 43.5,1.4 45.0,3.4" fill="none" stroke="#4ADE80" stroke-width="1.2"/></svg></td><td class="r mono mu wl-opt" title="Scout · move trigger 5.0% · distance to move / to 2× volume · checked 2026-10-10 16:12 AWST">3.9%<span class="fa">·</span>1.07×</td></tr><tr title="Yahoo chart API · as of Sat 10 Oct 4:00 AM AWST"><td><b class="mono">MSFT</b></td><td class="r mono" data-f="px">535.07</td><td class="r mono pos" data-f="pct">▲ +2.38%</td><td class="r mono mu" data-f="vr">0.85×</td><td class="r wl-opt"><svg width="46" height="16" viewBox="0 0 46 16" aria-hidden="true"><polyline points="1.0,7.7 2.5,9.7 4.0,11.6 5.6,13.0 7.1,8.8 8.6,12.1 10.1,13.9 11.6,14.6 13.1,14.3 14.7,13.3 16.2,10.3 17.7,12.9 19.2,15.0 20.7,12.7 22.2,13.9 23.8,11.5 25.3,12.6 26.8,11.8 28.3,12.6 29.8,6.9 31.3,9.1 32.9,9.2 34.4,7.9 35.9,8.0 37.4,6.5 38.9,4.1 40.4,2.8 42.0,2.7 43.5,4.9 45.0,1.0" fill="none" stroke="#4ADE80" stroke-width="1.2"/></svg></td><td class="r mono mu wl-opt" title="Scout · move trigger 5.0% · distance to move / to 2× volume · checked 2026-10-10 16:12 AWST">2.6%<span class="fa">·</span>1.15×</td></tr><tr title="Yahoo chart API · as of Sat 10 Oct 4:00 AM AWST"><td><b class="mono">AMD</b></td><td class="r mono" data-f="px">608.10</td><td class="r mono neg" data-f="pct">▼ −2.03%</td><td class="r mono mu" data-f="vr">0.66×</td><td class="r wl-opt"><svg width="46" height="16" viewBox="0 0 46 16" aria-hidden="true"><polyline points="1.0,14.3 2.5,13.9 4.0,14.8 5.6,14.9 7.1,15.0 8.6,13.4 10.1,11.4 11.6,10.3 13.1,11.6 14.7,10.7 16.2,12.3 17.7,11.5 19.2,10.9 20.7,8.6 22.2,7.5 23.8,3.5 25.3,2.9 26.8,3.5 28.3,2.5 29.8,2.4 31.3,4.0 32.9,4.0 34.4,3.7 35.9,3.4 37.4,2.1 38.9,2.3 40.4,1.0 42.0,1.3 43.5,3.1 45.0,4.0" fill="none" stroke="#4ADE80" stroke-width="1.2"/></svg></td><td class="r mono mu wl-opt" title="Scout · move trigger 5.0% · distance to move / to 2× volume · checked 2026-10-10 16:12 AWST">3.0%<span class="fa">·</span>1.34×</td></tr><tr title="Yahoo chart API · as of Sat 10 Oct 4:00 AM AWST"><td><b class="mono">META</b></td><td class="r mono" data-f="px">718.67</td><td class="r mono neg" data-f="pct">▼ −0.31%</td><td class="r mono mu" data-f="vr">0.60×</td><td class="r wl-opt"><svg width="46" height="16" viewBox="0 0 46 16" aria-hidden="true"><polyline points="1.0,14.6 2.5,15.0 4.0,14.6 5.6,13.6 7.1,12.4 8.6,12.0 10.1,12.2 11.6,9.5 13.1,10.1 14.7,9.8 16.2,8.6 17.7,8.3 19.2,8.1 20.7,7.5 22.2,8.6 23.8,3.5 25.3,3.8 26.8,3.3 28.3,1.0 29.8,2.8 31.3,5.2 32.9,3.6 34.4,4.6 35.9,4.5 37.4,4.4 38.9,3.4 40.4,3.6 42.0,4.8 43.5,4.9 45.0,5.0" fill="none" stroke="#4ADE80" stroke-width="1.2"/></svg></td><td class="r mono mu wl-opt" title="Scout · move trigger 5.0% · distance to move / to 2× volume · checked 2026-10-10 16:12 AWST">4.7%<span class="fa">·</span>1.40×</td></tr><tr title="Yahoo chart API · as of Sat 10 Oct 4:00 AM AWST"><td><b class="mono">TSLA</b></td><td class="r mono" data-f="px">382.70</td><td class="r mono pos" data-f="pct">▲ +2.05%</td><td class="r mono mu" data-f="vr">1.02×</td><td class="r wl-opt"><svg width="46" height="16" viewBox="0 0 46 16" aria-hidden="true"><polyline points="1.0,15.0 2.5,7.1 4.0,12.0 5.6,11.6 7.1,3.6 8.6,12.8 10.1,7.0 11.6,7.1 13.1,8.9 14.7,8.1 16.2,10.8 17.7,11.8 19.2,11.2 20.7,7.8 22.2,8.6 23.8,4.1 25.3,2.6 26.8,2.1 28.3,3.0 29.8,5.4 31.3,11.4 32.9,13.3 34.4,12.5 35.9,12.8 37.4,6.0 38.9,2.6 40.4,1.8 42.0,3.0 43.5,4.2 45.0,1.0" fill="none" stroke="#4ADE80" stroke-width="1.2"/></svg></td><td class="r mono mu wl-opt" title="Scout · move trigger 5.0% · distance to move / to 2× volume · checked 2026-10-10 16:12 AWST">3.0%<span class="fa">·</span>0.98×</td></tr><tr title="Yahoo chart API · as of Sat 10 Oct 4:00 AM AWST"><td><b class="mono">SPY</b></td><td class="r mono" data-f="px">778.57</td><td class="r mono pos" data-f="pct">▲ +0.60%</td><td class="r mono mu" data-f="vr">0.52×</td><td class="r wl-opt"><svg width="46" height="16" viewBox="0 0 46 16" aria-hidden="true"><polyline points="1.0,6.4 2.5,7.7 4.0,10.7 5.6,8.8 7.1,4.3 8.6,6.0 10.1,8.3 11.6,10.3 13.1,12.9 14.7,9.3 16.2,11.2 17.7,13.1 19.2,15.0 20.7,10.2 22.2,10.7 23.8,4.1 25.3,4.2 26.8,7.3 28.3,7.7 29.8,5.3 31.3,8.5 32.9,9.3 34.4,10.2 35.9,9.4 37.4,6.3 38.9,3.4 40.4,1.0 42.0,2.0 43.5,3.9 45.0,1.3" fill="none" stroke="#4ADE80" stroke-width="1.2"/></svg></td><td class="r mono mu wl-opt" title="Scout · move trigger 2.0% · distance to move / to 2× volume · checked 2026-10-10 16:12 AWST">1.4%<span class="fa">·</span>1.48×</td></tr><tr data-live="BTCUSDT" data-avg="1325255102.1302915" title="Binance spot · as of Sat 10 Oct 4:25 PM AWST"><td><b class="mono">BTC</b></td><td class="r mono" data-f="px">82,871.84</td><td class="r mono pos" data-f="pct">▲ +0.37%</td><td class="r mono mu" data-f="vr">0.70×</td><td class="r wl-opt"><svg width="46" height="16" viewBox="0 0 46 16" aria-hidden="true"><polyline points="1.0,13.0 2.5,12.9 4.0,13.5 5.6,11.8 7.1,15.0 8.6,14.3 10.1,14.0 11.6,8.3 13.1,7.8 14.7,7.9 16.2,1.0 17.7,1.5 19.2,3.8 20.7,3.8 22.2,4.2 23.8,3.8 25.3,3.7 26.8,5.0 28.3,4.8 29.8,4.8 31.3,3.2 32.9,3.7 34.4,3.4 35.9,1.1 37.4,2.1 38.9,2.4 40.4,5.2 42.0,7.2 43.5,6.1 45.0,5.8" fill="none" stroke="#4ADE80" stroke-width="1.2"/></svg></td><td class="r mono mu wl-opt" title="Scout · move trigger 5.0% · distance to move / to 2× volume · checked 2026-10-10 16:12 AWST">4.8%<span class="fa">·</span>1.30×</td></tr><tr data-live="ETHUSDT" data-avg="768830332.4185523" title="Binance spot · as of Sat 10 Oct 4:25 PM AWST"><td><b class="mono">ETH</b></td><td class="r mono" data-f="px">2,495.61</td><td class="r mono neg" data-f="pct">▼ −0.20%</td><td class="r mono mu" data-f="vr">0.42×</td><td class="r wl-opt"><svg width="46" height="16" viewBox="0 0 46 16" aria-hidden="true"><polyline points="1.0,10.6 2.5,10.3 4.0,12.1 5.6,10.6 7.1,15.0 8.6,14.3 10.1,13.2 11.6,7.1 13.1,6.3 14.7,5.9 16.2,1.0 17.7,1.8 19.2,4.4 20.7,4.3 22.2,4.1 23.8,4.0 25.3,4.2 26.8,4.2 28.3,4.6 29.8,4.3 31.3,3.6 32.9,5.0 34.4,4.3 35.9,2.8 37.4,3.5 38.9,3.9 40.4,8.5 42.0,12.2 43.5,11.7 45.0,11.4" fill="none" stroke="#FF6B78" stroke-width="1.2"/></svg></td><td class="r mono mu wl-opt" title="Scout · move trigger 5.0% · distance to move / to 2× volume · checked 2026-10-10 16:12 AWST">4.7%<span class="fa">·</span>1.47×</td></tr><tr class="grp"><td colspan="6">Open &amp; pending paper trades</td></tr><tr data-live="STRKUSDT" data-avg="10480916.75185949" title="Binance spot · as of Sat 10 Oct 4:25 PM AWST"><td><b class="mono">STRK</b> <span class=fa style=font-size:9.5px>crypto</span></td><td class="r mono" data-f="px">0.0694</td><td class="r mono neg" data-f="pct">▼ −4.40%</td><td class="r mono wrn" data-f="vr">3.81×</td><td class="r wl-opt"><svg width="46" height="16" viewBox="0 0 46 16" aria-hidden="true"><polyline points="1.0,14.4 2.5,14.3 4.0,14.6 5.6,14.3 7.1,15.0 8.6,14.6 10.1,14.3 11.6,9.7 13.1,9.6 14.7,8.4 16.2,9.8 17.7,10.2 19.2,11.5 20.7,11.2 22.2,10.6 23.8,10.8 25.3,10.4 26.8,10.4 28.3,10.4 29.8,10.0 31.3,10.4 32.9,10.1 34.4,6.7 35.9,5.3 37.4,7.1 38.9,7.5 40.4,8.2 42.0,6.3 43.5,1.0 45.0,2.1" fill="none" stroke="#4ADE80" stroke-width="1.2"/></svg></td><td class="r fa wl-opt">—</td></tr><tr title="Yahoo chart API · as of Sat 10 Oct 4:00 AM AWST"><td><b class="mono">CCI</b> <span class=fa style=font-size:9.5px>stock</span></td><td class="r mono" data-f="px">79.64</td><td class="r mono pos" data-f="pct">▲ +15.60%</td><td class="r mono wrn" data-f="vr">4.19×</td><td class="r wl-opt"><svg width="46" height="16" viewBox="0 0 46 16" aria-hidden="true"><polyline points="1.0,4.6 2.5,4.6 4.0,4.9 5.6,5.4 7.1,3.5 8.6,4.9 10.1,4.8 11.6,5.6 13.1,7.0 14.7,5.2 16.2,6.7 17.7,7.6 19.2,7.6 20.7,7.1 22.2,7.8 23.8,7.6 25.3,8.5 26.8,10.7 28.3,13.4 29.8,13.2 31.3,14.0 32.9,14.0 34.4,14.5 35.9,15.0 37.4,14.7 38.9,13.5 40.4,12.8 42.0,12.0 43.5,12.1 45.0,1.0" fill="none" stroke="#4ADE80" stroke-width="1.2"/></svg></td><td class="r fa wl-opt">—</td></tr></tbody></table>
+<div class="pad fa" style="font-size:10.5px">Stocks/ETF: Yahoo daily bars, last session (<!--ts-->Sat 10 Oct 4:00 AM AWST<!--/ts-->). Crypto: Binance spot, live every 15s. </div></div></section><div class="center"><section class="pn p-chart fade" style="--i:9"><div class="ph"><h2>Paper balance</h2><div class="r"><span class="feed"><i></i>no closed trades yet, curve moves once one closes</span><span>dashed: $10,000 start</span></div></div>
+<div class="pb" style="position:relative;padding:6px 8px 4px;overflow:hidden"><canvas id="bal" role="img" aria-label="Paper balance over time"></canvas></div></section><section class="pn p-ledger fade" style="--i:10"><div class="ph"><div class="seg" role="tablist" aria-label="Ledger views">
+<button role="tab" aria-selected="true" aria-controls="t-pos">Positions &amp; orders <span class="mono fa">2</span></button>
+<button role="tab" aria-selected="false" aria-controls="t-closed">Closed <span class="mono fa">0</span></button>
+<button role="tab" aria-selected="false" aria-controls="t-passed">Passed <span class="mono fa">4</span></button></div><div class="r"><span class="feed on" title="charts-live.csv: ok · 2026-10-10 16:13 AWST"><i></i>Charts</span><span class="feed on" title="skeptic-live.csv: ok · 2026-10-10 16:12 AWST"><i></i>Skeptic</span><span class="feed on" title="sentiment-live.csv: ok · 2026-10-10 16:14 AWST"><i></i>Sentiment</span><span class="feed on" title="news-live.csv: ok · 2026-10-10 13:50"><i></i>News</span><span class="feed on" title="watchlist-live.csv: ok · 2026-10-10 16:12 AWST"><i></i>Scout</span></div></div>
+<div class="pb tbl" id="t-pos" role="tabpanel"><table><thead><tr><th>Lead</th><th>Ticker</th><th>Status</th><th>Side</th><th class="r">Entry</th><th class="r">Stop</th><th class="r">Target</th><th class="r">Last</th><th class="r">Unreal. P&amp;L</th><th class="r">R</th><th title="charts-live.csv">Chart · levels</th><th title="skeptic-live.csv">Gate</th><th title="sentiment-live.csv">Crowd</th><th title="news-live.csv">News</th><th title="news-live.csv">Next catalyst</th><th>Note</th></tr></thead><tbody><tr class="opn" data-lead="L002"><td class="mono">#L002</td><td><b>STRK</b></td><td><span class="chip open">open</span></td><td><span class="chip long">LONG</span></td><td class="r mono">0.0710</td><td class="r mono neg">0.0680</td><td class="r mono pos">0.0830</td><td class="r mono" data-f="px">0.0694</td><td class="r mono neg" data-f="pnl">▼ −$5.77</td><td class="r mono" data-f="r">−0.55R</td><td class="w">D <span class="pos">up</span> · 1h <span class="neg">down since 10:00 AWST (below 1h SMA20)</span><span class="sub mono">S 0.0700; 0.0685 · R 0.0777 · R:R 4.0</span><span class="sub mono"><span class="neg">2.5% to stop</span> · <span class="pos">18.9% to tgt</span></span><span class="sub" title="Binance bids within 1% ~$87.8k / asks ~$82.8k; 24h vol $44.5M (14:38 AWST)">liq: Binance bids within 1% ~$87.8k / asks ~$82.8k; 24…</span></td><td class="w"><span class="chip reduce">REDUCE</span> <span title="Clean trend and stop fits, but catalyst is intent only (no proposal or vote), off watchlist, scam posts around it">Clean trend and stop fits, but catalyst is intent only (no proposal o…</span><span class="sub" title="$250 size; filled 0.0710; stop 0.0680 (no lowering), target 0.0830; no adding; 15 Oct unlock and high OI noted">⚑ $250 size; filled 0.0710; stop 0.0680 (no lowering), target 0.0830; no adding; 15 Oct unl…</span></td><td class="w"><span class="chip bull">bullish</span> <span class="mono">45</span> <span class="chip warn">hype moderate</span><span class="sub">funding <span class="mono pos">+0.0033%</span> · OI <span class="mono">$25.7M</span></span><span class="sub" title="desk/sentiment-2026-10-10.md (X + StockTwits gauge; read 2026-10-10 09:58 AWST) | https://fapi.binance.com/fapi/v1/premiumIndex?symbol=STRKUSDT">desk/sentiment-2026-10-10.md (X + Stock… · <a href="https://fapi.binance.com/fapi/v1/premiumIndex?symbol=STRKUSDT" target="_blank" rel="noopener">funding src</a></span></td><td class="w"><span class="chip rep">REPORTED</span> <a href="https://decrypt.co/380585/ethereum-l2-starknet-jumps-20-after-saying-it-wants-to-become-an-l1" target="_blank" rel="noopener">Starknet &quot;actively considering becoming an L1&quot; (no vote or timeline)</a><span class="sub">2026-10-08 · checked 2026-10-10 13:50 AWST</span></td><td><a href="https://docs.starknet.io/learn/protocol/strk" target="_blank" rel="noopener">127M STRK unlock (1.27% supply)</a><span class="sub"><span class="mono wrn">Thu 15 Oct</span> · in 5d</span></td><td class="w xl" title="PAPER BUY by Yong Sen 13:47 MYT on Skeptic REDUCE terms. Filled at market 0.0710 (Charts, Binance 13:46 MYT; limit 0.0730 was above market); fill signed off by The Skeptic 14:10 MYT under the auto-trade dry run. Risk ~$10.56. Off watchlist. 15 Oct ~127M STRK unlock inside the hold.">PAPER BUY by Yong Sen 13:47 MYT on Skeptic REDUCE terms. Filled at market 0.0710 (Charts, Binance 13:46 MYT; limit 0.0730 was above market); fill signed off by…</td></tr><tr class="pnd" data-lead="L003"><td class="mono">#L003</td><td><b>CCI</b></td><td><span class="chip pending">pending</span></td><td><span class="chip long">LONG</span></td><td class="r mono">77.30</td><td class="r mono neg">76.40</td><td class="r mono pos">80.60</td><td class="r mono" data-f="px">79.64</td><td class="r mono neu" data-f="pnl">—</td><td class="r mono" data-f="r">—</td><td class="w">D <span class="pos">down long-term; gap up</span> · 1h <span class="pos">up</span><span class="sub mono">S 76.96-77.30; 73.75 · R 80.69; 82.58 (SMA200) · R:R 3.7</span><span class="sub mono"><span class="neg">4.1% to stop</span> · <span class="pos">1.2% to tgt</span></span><span class="sub" title="30d avg $vol ~$246M (Yahoo)">liq: 30d avg $vol ~$246M (Yahoo)</span></td><td class="w"><span class="chip reduce">REDUCE</span> <span title="Best-sourced SpaceX lead, but no lease signed, Q3 earnings 21 Oct, Dish lease-claim risk, below 200-day">Best-sourced SpaceX lead, but no lease signed, Q3 earnings 21 Oct, Di…</span><span class="sub" title="$250 size; limit 77.30, stop 76.40, target 80.60">⚑ $250 size; limit 77.30, stop 76.40, target 80.60</span><span class="sub">expires Tue 13 Oct 4:00 AM AWST</span><span class="sub">forced exit Wed 21 Oct 4:00 AM AWST</span></td><td class="w"><span class="chip bull">bullish</span> <span class="mono">60</span> <span class="chip warn">hype low-moderate</span><span class="sub" title="desk/sentiment-2026-10-10.md (X + StockTwits; read 2026-10-10 09:58 AWST)">desk/sentiment-2026-10-10.md (X + Stock…</span></td><td class="w"><span class="chip rep">REPORTED</span> <a href="https://graingp.com/grain-management-announces-definitive-agreement-to-sell-nationwide-800-mhz-spectrum-portfolio-to-spacex/" target="_blank" rel="noopener">SpaceX to buy Grain 800 MHz spectrum; tower-tenant hopes (no lease)</a><span class="sub">2026-10-08 · checked 2026-10-10 10:05 AWST</span></td><td><a href="https://www.ad-hoc-news.de/boerse/news/corporate-news/crown-castle-stock-heads-toward-october-21-results-on-nyse/70227577" target="_blank" rel="noopener">Q3 earnings</a><span class="sub"><span class="mono ">Wed 21 Oct</span> · in 11d</span></td><td class="w xl" title="Auto-opened in the dry run on Skeptic REDUCE ($250). Buy limit 77.30; fills only if CCI trades at or below 77.30 (Friday close $79.64). Off watchlist. Q3 earnings 21 Oct inside the hold; Dish lease-claim mediation runs to 4 Nov. Skeptic conditions: the limit expires at the Mon 12 Oct 4:00 PM ET close (cancel and log as expired if unfilled); if filled, close by the 20 Oct close before earnings.">Auto-opened in the dry run on Skeptic REDUCE ($250). Buy limit 77.30; fills only if CCI trades at or below 77.30 (Friday close $79.64). Off watchlist. Q3 earni…</td></tr></tbody></table></div>
+<div class="pb tbl" id="t-closed" role="tabpanel" hidden><div class="empty"><b>No closed trades yet.</b> Each closed paper trade lands here with its lead ID, R multiple and P&amp;L.</div></div>
+<div class="pb tbl muted-rows" id="t-passed" role="tabpanel" hidden><table><thead><tr><th>Lead</th><th>Ticker</th><th>Verdict</th><th>Date</th><th>Reason</th><th title="charts-live.csv">Chart · levels</th><th title="skeptic-live.csv">Gate</th><th title="sentiment-live.csv">Crowd</th><th title="news-live.csv">News</th><th title="news-live.csv">Next catalyst</th></tr></thead><tbody><tr><td class="mono">#L001</td><td><b style="color:var(--tx)">KAIA</b></td><td><span class="chip reject">Reject</span></td><td class="mono">2026-10-10</td><td class="w xl">Skeptic REJECT: +62.3% on 13.7x vol right after the Upbit listing looks like sell-the-news; heavy Telegram signal spam and new accounts posting profit claims. Ref $0.0610 (Scout, CoinGecko 09:52 AWST).</td><td class="w">D <span class="pos">up (parabolic)</span> · 1h <span class="pos">up</span><span class="sub mono">S 0.0583; 0.0510 · R 0.0641; 0.0680 · R:R 2.2</span><span class="sub mono"><span class="neg">13.5% to stop</span> · <span class="pos">16.4% to tgt</span></span><span class="sub" title="Binance only; not re-checked (rejected)">liq: Binance only; not re-checked (rejected)</span></td><td class="w"><span class="chip reject">REJECT</span> <span title="Listing pump (+62% on 13.7x vol) with heavy Telegram signal spam and new-account profit claims; hype fails">Listing pump (+62% on 13.7x vol) with heavy Telegram signal spam and…</span></td><td class="w"><span class="chip skip">mixed</span> <span class="mono">10</span> <span class="chip reject">hype heavy</span><span class="sub">funding <span class="mono neg">-0.3699%</span> · OI <span class="mono">$14.2M</span></span><span class="sub" title="desk/sentiment-2026-10-10.md (X + StockTwits gauge; read 2026-10-10 09:58 AWST) | https://fapi.binance.com/fapi/v1/premiumIndex?symbol=KAIAUSDT">desk/sentiment-2026-10-10.md (X + Stock… · <a href="https://fapi.binance.com/fapi/v1/premiumIndex?symbol=KAIAUSDT" target="_blank" rel="noopener">funding src</a></span></td><td class="w"><span class="chip rep">REPORTED</span> <a href="https://ethnews.com/kaia-price-surges-65-as-upbit-opens-won-trading/" target="_blank" rel="noopener">Upbit lists KAIA on KRW/BTC/USDT</a><span class="sub">2026-10-09 · checked 2026-10-10 10:05 AWST</span></td><td><span class="fa">none listed</span></td></tr><tr><td class="mono">#L004</td><td><b style="color:var(--tx)">TMUS</b></td><td><span class="chip reject">Reject</span></td><td class="mono">2026-10-10</td><td class="w xl">Skeptic REJECT: falling knife at a fresh 1-year low with no support in the data; Charts found no setup. Ref $148.58, -13.3% (Scout, Yahoo).</td><td class="w">D <span class="neg">down (1y low)</span> · 1h <span class="neg">down</span><span class="sub mono">S none below 147.90 in 1y data · R 150.35; 153.61-156.89</span><span class="sub" title="not computed (no setup)">liq: not computed (no setup)</span></td><td class="w"><span class="chip reject">REJECT</span> <span title="No setup and no support under a fresh one-year low; falling knife">No setup and no support under a fresh one-year low; falling knife</span></td><td class="w"><span class="chip bull">bullish</span> <span class="mono">55</span> <span class="chip warn">hype moderate</span><span class="sub" title="desk/sentiment-2026-10-10.md (X + StockTwits; read 2026-10-10 09:58 AWST)">desk/sentiment-2026-10-10.md (X + Stock…</span></td><td class="w"><span class="chip rep">REPORTED</span> <a href="https://stocktwits.com/news-articles/markets/equity/vz-tmus-t-stock-price-targets-cut-by-scotiabank-analyst-sees-higher-risk-of-disruption-from-space-x-spectrum-deal/cZD6F9zRBVU" target="_blank" rel="noopener">Scotiabank PT $217 to $212 after SpaceX spectrum deal</a><span class="sub">2026-10-09 · checked 2026-10-10 10:05 AWST</span></td><td><span class="fa">none listed</span></td></tr><tr><td class="mono">#L005</td><td><b style="color:var(--tx)">ASTS</b></td><td><span class="chip reject">Reject</span></td><td class="mono">2026-10-10</td><td class="w xl">Skeptic REJECT: counter-trend after losing the spectrum to SpaceX; the Roth $108 target came before the news; heavy pump-group hype. Ref $50.97, -10.5% (Scout, Yahoo).</td><td class="w">D <span class="neg">down (1y low)</span> · 1h <span class="mu">bottoming, higher lows</span><span class="sub mono">S 48.30; 47.57 · R 51.60; 55.83-55.96 · R:R 2.1</span><span class="sub mono"><span class="neg">7.2% to stop</span> · <span class="pos">9.5% to tgt</span></span><span class="sub" title="not computed (rejected)">liq: not computed (rejected)</span></td><td class="w"><span class="chip reject">REJECT</span> <span title="Counter-trend on a company that lost the spectrum; Roth target predates the news; heavy pump-group hype">Counter-trend on a company that lost the spectrum; Roth target predat…</span></td><td class="w"><span class="chip skip">mixed</span> <span class="mono">30</span> <span class="chip reject">hype heavy</span><span class="sub" title="desk/sentiment-2026-10-10.md (X + StockTwits; read 2026-10-10 09:58 AWST)">desk/sentiment-2026-10-10.md (X + Stock…</span></td><td class="w"><span class="chip rep">REPORTED</span> <a href="https://www.fool.com/investing/2026/10/09/why-ast-spacemobile-sank-today/" target="_blank" rel="noopener">SpaceX wins 800 MHz spectrum AST had pursued</a><span class="sub">2026-10-09 · checked 2026-10-10 10:05 AWST</span></td><td><span class="fa">none listed</span></td></tr><tr><td class="mono">#TEST</td><td><b style="color:var(--tx)">AAPL</b></td><td><span class="chip reject">Reject</span></td><td class="mono">2026-10-10</td><td class="w xl">Test lead with no Scout ID. Skeptic REJECT: &#x27;$500 buyout tomorrow&#x27; X rumor had no source, no 8-K and no posts repeating it. Ref close $336.64, -1.11% (Scout, Yahoo).</td><td class="w"><span class="fa">—</span></td><td class="w"><span class="chip reject">REJECT</span> <span title="$500 buyout rumor has no source: no 8-K, no release, no posts; always-skip rule">$500 buyout rumor has no source: no 8-K, no release, no posts; always…</span></td><td class="w"><span class="chip bear">bearish</span> <span class="mono">-20</span> <span class="chip skip">hype n/a (rumor unfounded)</span><span class="sub" title="X search 2026-10-10 ~10:03 AWST">X search 2026-10-10 ~10:03 AWST</span></td><td class="w"><span class="fa">—</span></td><td><span class="fa">none listed</span></td></tr></tbody></table></div>
+</section></div><section class="pn p-pos fade" style="--i:8"><div class="ph"><h2>Positions &amp; orders</h2><div class="r">1 open · 1 pending</div></div><div class="pb pad" style="display:flex;flex-direction:column;gap:8px"><article class="poscard fade" style="--i:8" data-lead="L002" data-live="STRKUSDT" data-side="long" data-entry="0.071" data-stop="0.068" data-target="0.083" data-size="250.0">
+<div class="pc-top"><b style="font-size:13px">STRK</b><span class="chip long">LONG</span><span class="mono fa">#L002</span><span class="chip open" title="Updates live from Binance">LIVE</span>
+<span class="num neg pc-pnl" style="margin-left:auto;font-weight:600">▼ −$5.77</span></div>
+<div class="pc-grid mono"><span><i>Entry</i>0.0710</span><span><i>Last</i><b class="pc-px">0.0694</b></span><span><i>Stop</i><span class="neg">0.0680</span></span><span><i>Target</i><span class="pos">0.0830</span></span></div>
+<div class="range" style="--e:20.00%;--p:9.07%"><span class="entry"></span><span class="dot"></span></div>
+<div class="pc-cap"><span class="pc-caption">0.5R to stop</span><span class="fa mono">$250 · risk $10.56 · R:R 4.0</span></div>
+<div class="fa" style="font-size:10.5px"><span class="pc-src">mark: Binance spot</span> · opened 2026-10-10</div>
+</article><article class="poscard pend fade" style="--i:10"><div class="pc-top"><b style="font-size:13px">CCI</b><span class="chip long">LONG</span><span class="mono fa">#L003</span><span class="chip pending">LIMIT · PENDING</span>
+<span class="mono" style="margin-left:auto" data-until="2026-10-13T04:00:00+08:00"></span></div>
+<div class="pc-grid mono"><span><i>Limit</i>77.30</span><span><i>Last</i>79.64</span><span><i>Stop</i><span class="neg">76.40</span></span><span><i>Target</i><span class="pos">80.60</span></span></div>
+<div class="fa" style="font-size:10.5px">Last is 3.0% above the limit · $250 · risk if filled $2.91</div>
+<div style="font-size:10.5px">Expires <b class="mono">Tue 13 Oct 4:00 AM AWST</b> <span class="fa">(Mon 12 Oct 4:00 PM ET, from Skeptic feed)</span></div>
+<div class="wrn" style="font-size:10.5px">If filled, forced exit by Wed 21 Oct 4:00 AM AWST</div>
+</article></div></section></div><footer><span class="badge">PAPER</span><span>Paper trading only. No real orders are placed. Sources: desk/paper-ledger.csv, my-rules.md, desk/*-live.csv feeds, Yahoo chart API, Binance spot.</span><span class="r">Page reloads every 120s · built <!--ts-->4:25 PM AWST · Sat 10 Oct<!--/ts--> · all times AWST (UTC+8)</span></footer></div>
 <script>
 const RM=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const nf2=v=>Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 const fmt={
- money:v=>'$'+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),
- smoney:v=>Math.abs(v)<0.005?'± $0.00':(v>0?'▲ +$':'▼ −$')+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),
+ money:v=>'$'+nf2(v),
+ smoney:v=>Math.abs(v)<0.005?'± $0.00':(v>0?'▲ +$':'▼ −$')+nf2(v),
  spct:v=>Math.abs(v)<0.005?'± 0.00%':(v>0?'▲ +':'▼ −')+Math.abs(v).toFixed(2)+'%',
- pct0:v=>Math.round(v)+'%',
- int:v=>String(Math.round(v)),
- x:v=>v.toFixed(2)+'×'
+ pct0:v=>Math.round(v)+'%', int:v=>String(Math.round(v)),
+ px:v=>{const a=Math.abs(v),d=a<1?4:a<10?3:2;return v.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});}
 };
+const cl=v=>Math.abs(v)<0.005?'neu':v>0?'pos':'neg';
 function countUp(){
  if(RM)return;
  document.querySelectorAll('[data-to]').forEach(el=>{
@@ -154,26 +196,71 @@ function countUp(){
 }
 function chartDefaults(){
  if(!window.Chart)return false;
- Chart.defaults.color='#8B98A9';Chart.defaults.font.family="Inter,system-ui,sans-serif";Chart.defaults.font.size=11;
- Chart.defaults.borderColor='#1C2430';
+ Chart.defaults.color='#8B98A9';Chart.defaults.font.family="Inter,system-ui,sans-serif";Chart.defaults.font.size=10;Chart.defaults.borderColor='#1C2430';
  return true;
 }
-const TOOLTIP={backgroundColor:'#18202B',borderColor:'#232D3A',borderWidth:1,cornerRadius:8,padding:10,titleColor:'#E6EDF3',bodyColor:'#E6EDF3',
- titleFont:{family:'Inter',weight:'600',size:12},bodyFont:{family:"'JetBrains Mono',monospace",size:12},boxPadding:4,usePointStyle:true};
-document.addEventListener('DOMContentLoaded',countUp);
-
-const CURVE=[["Start", 10000.0], ["Now", 10000.0]];
-if(chartDefaults()){
- const ctx=document.getElementById('bal');
- const vals=CURVE.map(x=>x[1]);const lo=Math.min(10000,...vals),hi=Math.max(10000,...vals),pad=Math.max((hi-lo)*0.15,50);
- new Chart(ctx,{type:'line',data:{labels:CURVE.map(x=>x[0]),datasets:[
-  {label:'Balance',data:vals,borderColor:'#4F8CFF',borderWidth:2,tension:.25,pointRadius:0,pointHoverRadius:4,pointHoverBackgroundColor:'#4F8CFF',fill:true,
-    backgroundColor:c=>{const a=c.chart.chartArea;if(!a)return 'rgba(79,140,255,.18)';const g=c.chart.ctx.createLinearGradient(0,a.top,0,a.bottom);g.addColorStop(0,'rgba(79,140,255,.18)');g.addColorStop(1,'rgba(79,140,255,0)');return g;}},
-  {label:'Start',data:vals.map(()=>10000),borderColor:'#5B6878',borderWidth:1,borderDash:[4,4],pointRadius:0,pointHoverRadius:0,fill:false}]},
- options:{responsive:true,maintainAspectRatio:false,animation:RM?false:{duration:600,easing:'easeOutQuart'},
-  interaction:{mode:'index',intersect:false},
-  plugins:{legend:{display:false},tooltip:{...TOOLTIP,filter:i=>i.datasetIndex===0,callbacks:{label:i=>' '+fmt.money(i.parsed.y)+'  '+fmt.smoney(i.parsed.y-10000)}}},
-  scales:{x:{grid:{display:false},border:{color:'#232D3A'},ticks:{color:'#8B98A9',font:{size:11},maxTicksLimit:6,maxRotation:0}},
-   y:{min:Math.floor(lo-pad),max:Math.ceil(hi+pad),grid:{color:'#1C2430'},border:{display:false},ticks:{color:'#8B98A9',font:{size:11},maxTicksLimit:6,callback:v=>'$'+Number(v).toLocaleString('en-US')}}}}});
+const TOOLTIP={backgroundColor:'#18202B',borderColor:'#232D3A',borderWidth:1,cornerRadius:8,padding:8,titleColor:'#E6EDF3',bodyColor:'#E6EDF3',
+ titleFont:{family:'Inter',weight:'600',size:11},bodyFont:{family:"'JetBrains Mono',monospace",size:11},boxPadding:4,usePointStyle:true};
+function countdowns(){
+ const now=Date.now();
+ document.querySelectorAll('[data-until]').forEach(el=>{
+  const t=Date.parse(el.dataset.until);if(!isFinite(t))return;let s=Math.round((t-now)/1000);
+  if(s<=0){el.textContent='expired';el.classList.add('neg');return;}
+  const d=Math.floor(s/86400);s%=86400;const h=Math.floor(s/3600);s%=3600;const m=Math.floor(s/60);
+  el.textContent=(d?d+'d ':'')+String(h).padStart(d?2:1,'0')+'h '+String(m).padStart(2,'0')+'m';
+  el.classList.toggle('wrn',t-now<86400000);
+ });
 }
+function tabs(){
+ document.querySelectorAll('[role=tablist]').forEach(tl=>{
+  tl.querySelectorAll('[role=tab]').forEach(b=>b.addEventListener('click',()=>{
+   tl.querySelectorAll('[role=tab]').forEach(x=>{x.setAttribute('aria-selected',x===b);document.getElementById(x.getAttribute('aria-controls')).hidden=x!==b;});
+  }));
+ });
+}
+document.addEventListener('DOMContentLoaded',()=>{countUp();countdowns();tabs();setInterval(countdowns,30000);});
+
+const CURVE=[["Start", 10000.0], ["Now", 9994.23]],BAL0=10000.0,REAL=0.00,STOCK_UNR=0.0000,LIVE=["BTCUSDT", "ETHUSDT", "STRKUSDT"];
+let balChart=null;
+if(chartDefaults()){
+ const vals=CURVE.map(x=>x[1]);const lo=Math.min(BAL0,...vals),hi=Math.max(BAL0,...vals),pad=Math.max((hi-lo)*0.15,50);
+ balChart=new Chart(document.getElementById('bal'),{type:'line',data:{labels:CURVE.map(x=>x[0]),datasets:[
+  {label:'Balance',data:vals,borderColor:'#4F8CFF',borderWidth:2,tension:.25,pointRadius:0,pointHoverRadius:4,fill:true,
+    backgroundColor:c=>{const a=c.chart.chartArea;if(!a)return 'rgba(79,140,255,.18)';const g=c.chart.ctx.createLinearGradient(0,a.top,0,a.bottom);g.addColorStop(0,'rgba(79,140,255,.18)');g.addColorStop(1,'rgba(79,140,255,0)');return g;}},
+  {label:'Start',data:vals.map(()=>BAL0),borderColor:'#5B6878',borderWidth:1,borderDash:[4,4],pointRadius:0,pointHoverRadius:0,fill:false}]},
+ options:{responsive:true,maintainAspectRatio:false,animation:RM?false:{duration:600,easing:'easeOutQuart'},interaction:{mode:'index',intersect:false},
+  plugins:{legend:{display:false},tooltip:{...TOOLTIP,filter:i=>i.datasetIndex===0,callbacks:{label:i=>' '+fmt.money(i.parsed.y)+'  '+fmt.smoney(i.parsed.y-BAL0)}}},
+  scales:{x:{grid:{display:false},border:{color:'#232D3A'},ticks:{maxTicksLimit:6,maxRotation:0}},
+   y:{suggestedMin:Math.floor(lo-pad),suggestedMax:Math.ceil(hi+pad),grid:{color:'#1C2430'},border:{display:false},ticks:{maxTicksLimit:5,callback:v=>'$'+Number(v).toLocaleString('en-US')}}}}});
+}
+function setTxt(el,t,c){if(!el)return;if(el.textContent!==t){const up=parseFloat(t.replace(/[^0-9.\-]/g,''))>parseFloat(el.textContent.replace(/[^0-9.\-]/g,''));el.textContent=t;
+ if(!RM&&el.dataset.f==='px'){el.classList.remove('flash-up','flash-dn');void el.offsetWidth;el.classList.add(up?'flash-up':'flash-dn');}}
+ if(c!==undefined){el.classList.remove('pos','neg','neu');el.classList.add(c);}}
+const HOSTS=['https://api.binance.com','https://data-api.binance.vision'];
+async function tick(){
+ if(!LIVE.length)return;const st=document.getElementById('livets');let data=null;
+ for(const h of HOSTS){try{const r=await fetch(h+'/api/v3/ticker/24hr?symbols='+encodeURIComponent(JSON.stringify(LIVE)),{cache:'no-store'});if(r.ok){data=await r.json();break;}}catch(e){}}
+ if(!data){st.className='feed stale';st.innerHTML='<i></i>crypto live: unavailable, showing build-time prices';return;}
+ const P={};data.forEach(d=>P[d.symbol]=d);
+ document.querySelectorAll('tr[data-live]').forEach(tr=>{const d=P[tr.dataset.live];if(!d)return;const p=+d.lastPrice,c=+d.priceChangePercent,avg=+tr.dataset.avg;
+  setTxt(tr.querySelector('[data-f=px]'),fmt.px(p));setTxt(tr.querySelector('[data-f=pct]'),fmt.spct(c),cl(c));
+  if(avg)setTxt(tr.querySelector('[data-f=vr]'),(+d.quoteVolume/avg).toFixed(2)+'×');});
+ let cu=0,risk=0;
+ document.querySelectorAll('.poscard[data-live]').forEach(cd=>{const d=P[cd.dataset.live];if(!d)return;const p=+d.lastPrice,e=+cd.dataset.entry,s=+cd.dataset.stop,t=+cd.dataset.target,z=+cd.dataset.size,sg=cd.dataset.side==='short'?-1:1;
+  const pnl=(p-e)/e*z*sg;cu+=pnl;risk+=Math.max(0,(p-s)*(z/e)*sg);
+  const f=Math.max(0,Math.min(1,(p-s)/(t-s)));cd.querySelector('.range').style.setProperty('--p',(f*100).toFixed(2)+'%');
+  const dt=(p-e)/(t-e);cd.querySelector('.pc-caption').textContent=Math.abs(p-e)<1e-12?'At entry · 0% of the way to target':dt>0?Math.round(dt*100)+'% of the way to target':((p-s)/(e-s)).toFixed(1)+'R to stop';
+  setTxt(cd.querySelector('.pc-px'),fmt.px(p));setTxt(cd.querySelector('.pc-pnl'),fmt.smoney(pnl),cl(pnl));cd.querySelector('.pc-src').textContent='mark: Binance live';
+  const row=document.querySelector('tr[data-lead="'+cd.dataset.lead+'"]');if(row){setTxt(row.querySelector('[data-f=px]'),fmt.px(p));setTxt(row.querySelector('[data-f=pnl]'),fmt.smoney(pnl),cl(pnl));
+   const rk=Math.abs(e-s)/e*z;setTxt(row.querySelector('[data-f=r]'),(pnl>=0?'+':'−')+Math.abs(pnl/rk).toFixed(2)+'R',cl(pnl));}
+ });
+ if(document.querySelector('.poscard[data-live]')){
+  const unr=STOCK_UNR+cu,bal=BAL0+REAL+unr;setTxt(document.getElementById('k-unr'),fmt.smoney(unr),cl(unr));setTxt(document.getElementById('k-bal'),fmt.money(bal));
+  setTxt(document.getElementById('k-chg'),fmt.spct((bal-BAL0)/BAL0*100),cl(bal-BAL0));document.getElementById('k-unr-src').textContent='crypto live';
+  setTxt(document.getElementById('k-risk'),'$'+nf2(risk+0.0000));
+  if(balChart){const ds=balChart.data.datasets[0].data;ds[ds.length-1]=+bal.toFixed(2);balChart.update('none');}
+ }
+ st.className='feed on';st.innerHTML='<i></i>crypto live · '+new Date().toLocaleTimeString('en-AU',{timeZone:'Australia/Perth',hour:'numeric',minute:'2-digit',second:'2-digit'})+' AWST';
+}
+tick();setInterval(tick,15000);
 </script></body></html>

@@ -1,151 +1,150 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="300">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="120">
 <meta name="color-scheme" content="dark"><meta name="theme-color" content="#0B0F14">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='4' fill='%234F8CFF'/%3E%3C/svg%3E">
 <title>Trading Desk · Backtest</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script><style>
 :root{--bg:#0B0F14;--sf:#121821;--sf2:#18202B;--bd:#232D3A;--bdh:#2E3A4A;--grid:#1C2430;--tx:#E6EDF3;--mu:#8B98A9;--fa:#5B6878;--ac:#4F8CFF;
 --up:#22C55E;--upt:#4ADE80;--dn:#F04452;--dnt:#FF6B78;--warn:#F5A524;--neu:#64748B;
---upbg:rgba(34,197,94,.12);--dnbg:rgba(240,68,82,.12);--warnbg:rgba(245,165,36,.12);
---sA:#4F8CFF;--sB:#A78BFA;--sC:#22D3EE;--sD:#F5A524}
+--upbg:rgba(34,197,94,.12);--dnbg:rgba(240,68,82,.12);--warnbg:rgba(245,165,36,.12);--acbg:rgba(79,140,255,.12)}
 *{box-sizing:border-box}[hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--tx);font:12px/1.4 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
 a{color:var(--ac);text-decoration:none}a:hover{text-decoration:underline}
 .num,.mono{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;font-feature-settings:"tnum";font-variant-numeric:tabular-nums}
-.wrap{max-width:1280px;margin:0 auto;padding:24px}
-.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
-.s3{grid-column:span 3}.s4{grid-column:span 4}.s6{grid-column:span 6}.s8{grid-column:span 8}.s12{grid-column:span 12}
-.label{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mu);font-weight:500}
-.muted{color:var(--mu)}.faint{color:var(--fa)}
-.pos{color:var(--upt)}.neg{color:var(--dnt)}.neu{color:var(--mu)}
-h1{font-size:16px;font-weight:600;margin:0;letter-spacing:-.005em}
-h2{font-size:20px;font-weight:600;margin:0;letter-spacing:-.01em}
-h3{font-size:16px;font-weight:600;margin:0}
-/* header */
-.hdr{position:sticky;top:0;z-index:50;background:rgba(18,24,33,.72);-webkit-backdrop-filter:saturate(140%) blur(12px);backdrop-filter:saturate(140%) blur(12px);border-bottom:1px solid var(--bd)}
-.hdr .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:12px;padding-bottom:12px}
-.brand{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0}
-.logo{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#4F8CFF,#A78BFA);display:grid;place-items:center;flex:none}
-.logo svg{width:16px;height:16px}
-.upd{font-size:12px;color:var(--mu);white-space:nowrap}
-.badge{font:600 11px/1 Inter,sans-serif;letter-spacing:.08em;padding:4px 8px;border-radius:999px;border:1px solid var(--warn);color:var(--warn);background:var(--warnbg)}
-.tabs{display:flex;background:var(--sf2);border:1px solid var(--bd);border-radius:10px;padding:3px;flex:none}
-.tabs a{padding:6px 14px;border-radius:7px;color:var(--mu);font-weight:500;font-size:13px;transition:color .15s,background .15s;text-decoration:none}
-.tabs a:hover{color:var(--tx)}
-.tabs a[aria-current=page]{background:var(--sf);color:var(--tx);box-shadow:inset 0 0 0 1px var(--bd)}
-/* cards */
-.card{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:18px;transition:border-color .15s;min-width:0}
-.card:hover{border-color:var(--bdh)}
-.fade{animation:up .45s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0) * 40ms)}
-@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.sec{margin-top:28px}
-.sechead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
-.sechead .sub{font-size:13px;color:var(--mu)}
-.kpi{font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.15;margin-top:6px;white-space:nowrap}
-.hero{font-size:40px;font-weight:700;letter-spacing:-.03em;line-height:1.1;margin:8px 0 6px}
-.chip{display:inline-flex;align-items:center;gap:6px;font:600 11px/1 Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:5px 8px;border-radius:999px;border:1px solid var(--bd);color:var(--mu);white-space:nowrap}
-.chip.long{color:var(--upt);border-color:rgba(34,197,94,.45);background:var(--upbg)}
-.chip.short{color:var(--dnt);border-color:rgba(240,68,82,.45);background:var(--dnbg)}
-.chip.reject{color:var(--dnt);border-color:var(--dn);background:transparent}
-.chip.skip{color:var(--mu);border-color:var(--neu);background:transparent}
-.chip.warn{color:var(--warn);border-color:rgba(245,165,36,.5);background:var(--warnbg)}
+.lbl{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--mu);font-weight:500;white-space:nowrap}
+.mu{color:var(--mu)}.fa{color:var(--fa)}.pos{color:var(--upt)}.neg{color:var(--dnt)}.neu{color:var(--mu)}.wrn{color:var(--warn)}
+b{font-weight:600}
+/* terminal frame */
+.term{display:flex;flex-direction:column;gap:6px;padding:6px;min-height:100vh}
+.hdr{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:10px;height:36px;padding:0 10px;margin:-6px -6px 0;
+ background:rgba(18,24,33,.78);-webkit-backdrop-filter:saturate(140%) blur(12px);backdrop-filter:saturate(140%) blur(12px);border-bottom:1px solid var(--bd)}
+.logo{width:20px;height:20px;border-radius:5px;background:linear-gradient(135deg,#4F8CFF,#A78BFA);display:grid;place-items:center;flex:none}
+.logo svg{width:12px;height:12px}
+.hdr h1{font-size:13px;font-weight:600;margin:0;white-space:nowrap}
+.badge{font:600 10px/1 Inter,sans-serif;letter-spacing:.08em;padding:3px 6px;border-radius:999px;border:1px solid var(--warn);color:var(--warn);background:var(--warnbg)}
+.hdr .meta{display:flex;align-items:center;gap:12px;color:var(--mu);font-size:11px;white-space:nowrap;overflow:hidden;min-width:0}
+.hdr .meta .sep{color:var(--bd)}
+.tabs{display:flex;background:var(--sf2);border:1px solid var(--bd);border-radius:6px;padding:2px;margin-left:auto;flex:none}
+.tabs a{padding:3px 12px;border-radius:4px;color:var(--mu);font-weight:500;font-size:12px;transition:color .15s,background .15s;text-decoration:none}
+.tabs a:hover{color:var(--tx)}.tabs a[aria-current=page]{background:var(--sf);color:var(--tx);box-shadow:inset 0 0 0 1px var(--bd)}
+/* panels */
+.pn{background:var(--sf);border:1px solid var(--bd);border-radius:6px;display:flex;flex-direction:column;min-width:0;min-height:0;transition:border-color .15s}
+.pn:hover{border-color:var(--bdh)}
+.ph{display:flex;align-items:center;gap:8px;min-height:28px;padding:4px 10px;border-bottom:1px solid var(--bd);flex:none}
+.ph h2{font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin:0;color:var(--tx);white-space:nowrap}
+.ph .r{margin-left:auto;display:flex;gap:8px;align-items:center;color:var(--fa);font-size:10.5px;white-space:nowrap;overflow:hidden}
+.pb{flex:1;min-height:0;overflow:auto}
+.pad{padding:8px 10px}
+/* strips */
+.strip{display:flex;align-items:stretch;background:var(--sf);border:1px solid var(--bd);border-radius:6px;overflow-x:auto;scrollbar-width:thin}
+.cell{padding:5px 12px;border-right:1px solid var(--grid);min-width:0;flex:none;display:flex;flex-direction:column;justify-content:center;gap:1px}
+.cell:last-child{border-right:0}
+.cell .v{font-size:15px;font-weight:600;white-space:nowrap;line-height:1.25}
+.cell .s{font-size:10.5px;color:var(--mu);white-space:nowrap}
+.cell.big .v{font-size:20px;font-weight:700;letter-spacing:-.02em}
+.striphead{writing-mode:horizontal-tb;display:flex;align-items:center;padding:0 10px;font:600 10px Inter;letter-spacing:.1em;color:var(--mu);border-right:1px solid var(--bd);background:var(--sf2);flex:none;white-space:nowrap}
+.fade{animation:up .35s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0) * 30ms)}
+@keyframes up{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* chips */
+.chip{display:inline-flex;align-items:center;gap:4px;font:600 9.5px/1 Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:3px 5px;border-radius:4px;border:1px solid var(--bd);color:var(--mu);white-space:nowrap;vertical-align:middle}
+.chip.long,.chip.pass,.chip.bull,.chip.ok{color:var(--upt);border-color:rgba(34,197,94,.45);background:var(--upbg)}
+.chip.short,.chip.bear{color:var(--dnt);border-color:rgba(240,68,82,.45);background:var(--dnbg)}
+.chip.reject{color:var(--dnt);border-color:var(--dn)}
+.chip.skip,.chip.expired{color:var(--mu);border-color:var(--neu)}
+.chip.warn,.chip.reduce,.chip.pending,.chip.unv{color:var(--warn);border-color:rgba(245,165,36,.5);background:var(--warnbg)}
+.chip.open,.chip.rep,.chip.oos{color:var(--ac);border-color:rgba(79,140,255,.5);background:var(--acbg)}
 .chip.is{color:var(--mu);border-color:var(--neu)}
-.chip.oos{color:var(--ac);border-color:rgba(79,140,255,.5);background:rgba(79,140,255,.10)}
+.feed{display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--fa);white-space:nowrap}
+.feed i{width:6px;height:6px;border-radius:50%;background:var(--neu);display:inline-block;font-style:normal}
+.feed.on i{background:var(--up)}.feed.stale i{background:var(--warn)}.feed.on{color:var(--mu)}
 /* tables */
-.tbl{position:relative;border:1px solid var(--bd);border-radius:14px;background:var(--sf);overflow:hidden}
-.tbl .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{position:sticky;top:0;background:var(--sf2);color:var(--mu);font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;text-align:left;padding:10px 14px;white-space:nowrap;border-bottom:1px solid var(--bd)}
-td{height:40px;padding:8px 14px;border-bottom:1px solid var(--grid);vertical-align:middle;white-space:nowrap}
-tr:last-child td{border-bottom:0}
-tbody tr{transition:background .15s}
-tbody tr:hover td{background:var(--sf2)}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:11.5px}
+th{position:sticky;top:0;z-index:2;background:var(--sf2);color:var(--mu);font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;text-align:left;padding:5px 8px;white-space:nowrap;border-bottom:1px solid var(--bd)}
+td{padding:4px 8px;border-bottom:1px solid var(--grid);vertical-align:top;white-space:nowrap;height:28px}
+tbody tr{transition:background .15s}tbody tr:hover td{background:var(--sf2)}
 td.r,th.r{text-align:right}
-td.wrapc{white-space:normal;min-width:320px;color:var(--mu);line-height:1.45}
+td.w{white-space:normal;min-width:180px;max-width:300px;color:var(--mu);line-height:1.35}
+td.w.xl{min-width:260px;max-width:420px}
+.sub{display:block;font-size:10.5px;color:var(--fa);white-space:normal;line-height:1.3}
 tr.win td:first-child{box-shadow:inset 2px 0 0 var(--up)}
 tr.loss td:first-child{box-shadow:inset 2px 0 0 var(--dn)}
-.muted-tbl td{color:var(--mu)}.muted-tbl td.tk{color:var(--tx)}
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:36px 20px;color:var(--mu)}
-.empty .ico{width:40px;height:40px;border-radius:12px;background:var(--sf2);border:1px solid var(--bd);display:grid;place-items:center;margin-bottom:6px}
-.empty b{color:var(--tx);font-weight:600;font-size:14px}
-.empty p{margin:0;max-width:420px;font-size:13px}
-footer{margin-top:36px;padding:20px 0 8px;border-top:1px solid var(--bd);display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--fa);font-size:12px}
-@media(max-width:900px){
- .wrap{padding:16px}
- .s3,.s4,.s6,.s8,.s12{grid-column:1/-1}
- .kpi{font-size:22px}.hero{font-size:32px}
- .upd .long{display:none}
- .tbl th:first-child,.tbl td:first-child{position:sticky;left:0;z-index:2;background:var(--sf)}
- .tbl th:first-child{z-index:3;background:var(--sf2)}
- .tbl tbody tr:hover td:first-child{background:var(--sf2)}
- .tbl::after{content:"";position:absolute;top:0;right:0;bottom:0;width:28px;pointer-events:none;background:linear-gradient(90deg,rgba(18,24,33,0),var(--sf));border-radius:0 14px 14px 0}
+tr.opn td:first-child{box-shadow:inset 2px 0 0 var(--ac)}
+tr.pnd td:first-child{box-shadow:inset 2px 0 0 var(--warn)}
+.muted-rows td{color:var(--mu)}
+.empty{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 10px;color:var(--fa);font-size:11.5px;text-align:center}
+.empty b{color:var(--mu);font-weight:600}
+.nf{color:var(--fa);font-size:10.5px;font-style:italic}
+.seg{display:flex;gap:2px}
+.seg button{font:500 10.5px Inter,sans-serif;letter-spacing:.04em;color:var(--mu);background:none;border:1px solid transparent;border-radius:4px;padding:2px 8px;cursor:pointer;transition:color .15s,background .15s;white-space:nowrap}
+.seg button[aria-selected=true],.seg button[aria-pressed=true]{background:var(--sf2);color:var(--tx);border-color:var(--bd)}
+.seg button:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+.caveat{background:var(--warnbg);border:1px solid var(--warn);border-left-width:4px;border-radius:6px;padding:6px 10px;font-size:11.5px;color:#D9C9A8}
+.caveat b{color:var(--warn)}
+footer{display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--fa);font-size:10.5px;padding:2px 4px}
+footer .r{margin-left:auto}
+.flash-up{animation:fu 1s ease}.flash-dn{animation:fd 1s ease}
+@keyframes fu{from{background:rgba(34,197,94,.28)}to{background:transparent}}
+@keyframes fd{from{background:rgba(240,68,82,.28)}to{background:transparent}}
+@media(max-width:760px){
+ .hdr{height:auto;flex-wrap:wrap;padding:6px 10px;row-gap:4px}.hdr .meta{order:3;width:100%;flex-wrap:wrap;row-gap:2px}.hdr .meta .opt{display:none}
+ .tabs{margin-left:auto}
+ .pb.tbl td:first-child,.pb.tbl th:first-child{position:sticky;left:0;z-index:1;background:var(--sf)}
+ .pb.tbl th:first-child{z-index:3;background:var(--sf2)}
+ .cell.big .v{font-size:18px}
+ .strip .lbl{white-space:normal}
 }
-@media(max-width:560px){
- .hdr .wrap{flex-wrap:wrap;row-gap:8px}
- .tabs{order:3;width:100%}.tabs a{flex:1;text-align:center}
-}
-@media(prefers-reduced-motion:reduce){
- *,*::before,*::after{animation:none!important;transition:none!important}
-}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 
-.caveat{background:var(--warnbg);border:1px solid var(--warn);border-left-width:4px;border-radius:12px;padding:14px 16px;font-size:13px;color:var(--tx)}
-.caveat b{display:block;font-size:14px;margin-bottom:2px;color:var(--warn)}.caveat div{color:#D9C9A8}
-.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:8px;vertical-align:-1px;flex:none}
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-.schip{display:inline-flex;align-items:center;gap:2px;font:500 13px Inter,sans-serif;color:var(--tx);background:var(--sf2);border:1px solid var(--bd);border-radius:999px;padding:6px 12px;cursor:pointer;transition:color .15s,background .15s,border-color .15s,opacity .15s}
-.schip .sw{background:var(--c)}.schip b{margin-right:4px;color:var(--c)}
-.schip[aria-pressed=true]{border-color:var(--c);background:color-mix(in srgb,var(--c) 12%,transparent)}
+@media(min-width:1200px) and (min-height:680px){body.fit{height:100vh;overflow:hidden}body.fit .term{height:100vh;min-height:0}body.fit .btgrid{flex:1;min-height:0}}
+.sw{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:0;flex:none}
+.btgrid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);grid-template-rows:minmax(220px,46%) minmax(0,1fr);grid-template-areas:"eq cmp" "log log";gap:6px;min-height:0}
+.p-eq{grid-area:eq}.p-cmp{grid-area:cmp}.p-log{grid-area:log}
+.btgrid.ip{grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto;grid-template-areas:none}
+.chips{display:flex;flex-wrap:wrap;gap:4px;min-width:0;padding:5px 10px;border-bottom:1px solid var(--grid);flex:none}
+.schip{display:inline-flex;align-items:center;gap:2px;font:500 10.5px Inter,sans-serif;color:var(--tx);background:var(--sf2);border:1px solid var(--bd);border-radius:999px;padding:2px 8px;cursor:pointer;transition:color .15s,background .15s,border-color .15s,opacity .15s;white-space:nowrap}
+.schip .sw{background:var(--c)}.schip b{margin-right:3px;color:var(--c)}
+.schip[aria-pressed=true]{border-color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent)}
 .schip[aria-pressed=false]{opacity:.5}.schip[aria-pressed=false] .sw{background:transparent;box-shadow:inset 0 0 0 1.5px var(--c)}
-.schip:focus-visible,.seg button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
-.seg{display:flex;background:var(--sf2);border:1px solid var(--bd);border-radius:10px;padding:3px}
-.seg button{font:500 12px Inter,sans-serif;color:var(--mu);background:none;border:0;border-radius:7px;padding:5px 12px;cursor:pointer;transition:color .15s,background .15s}
-.seg button[aria-pressed=true]{background:var(--sf);color:var(--tx);box-shadow:inset 0 0 0 1px var(--bd)}
-th.grp{text-align:center;border-bottom:1px solid var(--bd)}th.oosh{color:var(--ac)}
-td.best{background:rgba(79,140,255,.12);box-shadow:inset 0 0 0 1px rgba(79,140,255,.45);font-weight:600}
-td.faint2{opacity:.6}tr.off{opacity:.35}
-.rk{display:inline-block;width:18px;color:var(--fa)}
-.hero-ip{display:grid;grid-template-columns:1fr 1.2fr;gap:24px;align-items:center;padding:24px}
-.timeline{min-width:0}
-.tl-bar{display:flex;height:44px;border-radius:10px;overflow:hidden;border:1px solid var(--bd);margin-left:10%}
-.tl-bar>div{display:flex;align-items:center;padding:0 12px;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden}
-.tl-is{background:repeating-linear-gradient(135deg,#18202B 0 8px,#1C2430 8px 16px);color:var(--mu)}
-.tl-oos{background:rgba(79,140,255,.16);color:#9DBDFF;border-left:2px dashed #5B6878}
-.tl-ticks{position:relative;height:34px;margin-top:8px;font-size:11px;color:var(--mu)}
-.tl-ticks span{position:absolute;top:0;white-space:nowrap}.tl-ticks span:first-child{left:0}.tl-ticks i{font-style:normal;color:var(--fa);font-family:Inter,sans-serif}
-.facts{display:grid;grid-template-columns:max-content 1fr;gap:10px 16px;margin:14px 0 0;font-size:13px}
-.facts dt{color:var(--mu)}.facts dd{margin:0}
-.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
-.step{display:grid;grid-template-columns:28px 1fr auto;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--grid)}.step:last-child{border-bottom:0}
-.dotc{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:600 12px 'JetBrains Mono',monospace;border:1px solid var(--bd);color:var(--mu);background:var(--sf2)}
-.step.done .dotc{background:var(--upbg);border-color:rgba(34,197,94,.5);color:var(--upt)}
-.step.now .dotc{border-color:var(--ac);color:var(--ac)}
-.step.todo{opacity:.7}
-@media(max-width:900px){.hero-ip{grid-template-columns:1fr}.chartbox{height:240px!important}.tl-bar{margin-left:0}.tl-ticks span:first-child{display:none}}
-@media(max-width:560px){.tl-bar>div{font-size:11px;padding:0 8px}.tl-bar>div span{overflow:hidden;text-overflow:ellipsis}}
+.schip[disabled]{opacity:.35;cursor:not-allowed;border-style:dashed}
+.schip:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+th.grp{text-align:center}th.oosh{color:var(--ac)}
+td.best{background:rgba(79,140,255,.14)!important;box-shadow:inset 0 0 0 1px rgba(79,140,255,.5);font-weight:600}
+td.dim{opacity:.55}tr.off{opacity:.35}tr.notrun td{opacity:.5}
+.facts{display:grid;grid-template-columns:max-content 1fr;gap:3px 12px;margin:0;font-size:11px}.facts dt{color:var(--mu)}.facts dd{margin:0}
+.tl{display:flex;height:18px;border-radius:4px;overflow:hidden;border:1px solid var(--bd);margin-top:3px;font-size:10px;font-weight:600;min-width:260px}
+.tl>div{display:flex;align-items:center;padding:0 6px;white-space:nowrap;overflow:hidden}
+.tl-is{background:repeating-linear-gradient(135deg,#18202B 0 6px,#1C2430 6px 12px);color:var(--mu)}.tl-oos{background:rgba(79,140,255,.16);color:#9DBDFF;border-left:2px dashed #5B6878}
+.strip .cell.grow{flex:1 1 260px}
+.kpis .cell{flex:1 1 auto}
+tr.done td{color:var(--tx)}tr.todo td{opacity:.65}
+@media(max-width:1199px){.btgrid{grid-template-columns:minmax(0,1fr);grid-template-rows:300px auto auto;grid-template-areas:"eq" "cmp" "log"}.btgrid.ip{grid-template-columns:1fr}.p-log .pb{max-height:560px}}
+@media(max-width:760px){.btgrid{grid-template-rows:260px auto auto}.ph{flex-wrap:wrap}.ph .r{margin-left:0;white-space:normal}
+ .kpis{flex-wrap:wrap}.kpis .cell{flex:1 1 45%;border-bottom:1px solid var(--grid)}.striphead{flex-basis:100%;padding:4px 10px;border-right:0;border-bottom:1px solid var(--bd)}
+ .strip{flex-wrap:wrap}.strip .cell{white-space:normal}.pb.tbl{overflow-x:auto}}
 </style></head>
-<body><header class="hdr"><div class="wrap"><div class="brand"><span class="logo" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l4-4 3 3 5-6"/><path d="M10 5h4v4"/></svg></span><h1>Trading Desk</h1><span class="badge" title="Paper trading only. No real orders.">PAPER</span><span class="upd">Updated 3:23 PM AWST · Sat 10 Oct 2026<span class="long"> · from backtest/results</span></span></div><nav class="tabs" aria-label="Dashboards"><a href="index.html">Live</a><a href="backtest.html" aria-current=page>Backtest</a></nav></div></header><main class="wrap">
-<div class="caveat fade" style="--i:2"><b>Backtest, not results. One month of data, 22 trades.</b>
-<div>Simulated on past prices, so look-ahead and overfitting risk is real. In-sample results (8–22 Sep) were used to tune the rules and flatter the strategy; only the out-of-sample period (23 Sep–8 Oct) counts as evidence, and with this few trades even that is mostly noise.</div></div>
-<div class="sec" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px"><div class="card fade" style="--i:1;border-top:3px solid #4F8CFF"><div class="label"><span class="mono" style="color:#4F8CFF">A</span> · OOS P&amp;L</div>
-<div class="kpi num neg">▼ −$18.93</div><div class="muted" style="font-size:12px;margin-top:4px">IS ▲ +$3.05 · 14 OOS trades</div></div></div>
-<section class="card sec fade" style="--i:3">
-<div class="sechead"><h3>Equity curve from $10,000</h3><span class="sub">Shaded: out-of-sample from 23 Sep</span></div>
-<div class="chips" role="group" aria-label="Show strategies"><button class="schip" type="button" aria-pressed="true" data-s="A" style="--c:#4F8CFF"><span class="sw"></span><b class="mono">A</b> Scout screen + Charts levels</button></div>
-<div class="chartbox" style="position:relative;height:340px;margin-top:12px"><canvas id="eq" role="img" aria-label="Equity curves by strategy"></canvas></div></section>
-<section class="sec"><div class="sechead"><h2>Strategy comparison</h2><span class="sub">Highlighted: best out-of-sample value in each column</span></div><div class="tbl"><div class="scroll"><table class="comp"><thead><tr><th rowspan="2" style="vertical-align:bottom">Strategy · ranked by OOS P&amp;L</th><th colspan="5" class="grp oosh">Out-of-sample · 23 Sep–8 Oct (evidence)</th><th colspan="5" class="grp">In-sample · 8–22 Sep (tuned, flattering)</th></tr><tr><th class="r oosh">Trades</th><th class="r oosh">Win</th><th class="r oosh">PF</th><th class="r oosh">Max DD</th><th class="r oosh">P&amp;L</th><th class="r">Trades</th><th class="r">Win</th><th class="r">PF</th><th class="r">Max DD</th><th class="r">P&amp;L</th></tr></thead><tbody><tr data-s="A"><td><span class="rk mono">1</span><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b> <span class="muted">Scout screen + Charts levels</span></td><td class="r mono oosc">14</td><td class="r mono best">29%</td><td class="r mono best">0.89</td><td class="r mono neg best">−$101.77</td><td class="r mono neg best">▼ −$18.93</td><td class="r mono faint2">8</td><td class="r mono faint2">38%</td><td class="r mono faint2">1.04</td><td class="r mono neg faint2">−$82.28</td><td class="r mono pos faint2">▲ +$3.05</td></tr></tbody></table></div></div></section>
-<section class="sec"><div class="sechead"><h2>Trade log</h2><div class="seg" role="group" aria-label="Period"><button type="button" data-per="ALL" aria-pressed="true">All</button><button type="button" data-per="IS" aria-pressed="false">IS</button><button type="button" data-per="OOS" aria-pressed="false">OOS</button></div></div>
-<div class="tbl"><div class="scroll" style="max-height:600px;overflow-y:auto"><table id="log"><thead><tr><th>Strat</th><th>Period</th><th>Entry date</th><th>Ticker</th><th class="r">Entry</th><th class="r">Stop</th><th class="r">Target</th><th class="r">Exit</th><th>Exit date</th><th>Reason</th><th class="r">R</th><th class="r">P&amp;L</th></tr></thead><tbody><tr class="loss" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono">2026-10-08</td><td><b>NBIS</b> <span class="faint" style="font-size:11px">STOCK</span></td><td class="r mono">233.13</td><td class="r mono neg">234.71</td><td class="r mono pos">249.19</td><td class="r mono">233.13</td><td class="mono muted">2026-10-08</td><td class="muted">gap_below_stop_exit_at_open</td><td class="r mono neg">−2.57R</td><td class="r mono neg">▼ −$7.08</td></tr><tr class="loss" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono">2026-10-07</td><td><b>STX</b> <span class="faint" style="font-size:11px">STOCK</span></td><td class="r mono">784.25</td><td class="r mono neg">770.82</td><td class="r mono pos">838.60</td><td class="r mono">781.32</td><td class="mono muted">2026-10-08</td><td class="muted">stop_next_open</td><td class="r mono neg">−0.22R</td><td class="r mono neg">▼ −$2.87</td></tr><tr class="loss" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono">2026-10-07</td><td><b>MRNA</b> <span class="faint" style="font-size:11px">STOCK</span></td><td class="r mono">183.01</td><td class="r mono neg">185.34</td><td class="r mono pos">208.90</td><td class="r mono">183.01</td><td class="mono muted">2026-10-07</td><td class="muted">gap_below_stop_exit_at_open</td><td class="r mono neg">−5.04R</td><td class="r mono neg">▼ −$9.07</td></tr><tr class="loss" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono">2026-10-06</td><td><b>STX</b> <span class="faint" style="font-size:11px">STOCK</span></td><td class="r mono">848.99</td><td class="r mono neg">845.70</td><td class="r mono pos">875.75</td><td class="r mono">821.03</td><td class="mono muted">2026-10-06</td><td class="muted">stop_next_open</td><td class="r mono neg">−8.96R</td><td class="r mono neg">▼ −$17.47</td></tr><tr class="loss" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono">2026-10-06</td><td><b>WDC</b> <span class="faint" style="font-size:11px">STOCK</span></td><td class="r mono">428.62</td><td class="r mono neg">436.69</td><td class="r mono pos">465.90</td><td class="r mono">428.62</td><td class="mono muted">2026-10-06</td><td class="muted">gap_below_stop_exit_at_open</td><td class="r mono neg">−3.68R</td><td class="r mono neg">▼ −$13.98</td></tr><tr class="loss" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono">2026-10-03</td><td><b>AAVE</b> <span class="faint" style="font-size:11px">CRYPTO</span></td><td class="r mono">178.14</td><td class="r mono neg">164.00</td><td class="r mono pos">206.43</td><td class="r mono">161.29</td><td class="mono muted">2026-10-08</td><td class="muted">stop_next_open</td><td class="r mono neg">−1.29R</td><td class="r mono neg">▼ −$51.30</td></tr><tr class="win" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono">2026-10-01</td><td><b>MRNA</b> <span class="faint" style="font-size:11px">STOCK</span></td><td class="r mono">186.01</td><td class="r mono neg">184.03</td><td class="r mono pos">199.25</td><td class="r mono">199.25</td><td class="mono muted">2026-10-01</td><td class="muted">target</td><td class="r mono pos">+2.58R</td><td class="r mono pos">▲ +$34.58</td></tr><tr class="win" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono">2026-09-30</td><td><b>AAVE</b> <span class="faint" style="font-size:11px">CRYPTO</span></td><td class="r mono">164.49</td><td class="r mono neg">153.57</td><td class="r mono pos">186.33</td><td class="r mono">186.33</td><td class="mono muted">2026-10-02</td><td class="muted">target</td><td class="r mono pos">+1.88R</td><td class="r mono pos">▲ +$62.40</td></tr><tr class="loss" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono">2026-09-29</td><td><b>SUI</b> <span class="faint" style="font-size:11px">CRYPTO</span></td><td class="r mono">1.159</td><td class="r mono neg">1.152</td><td class="r mono pos">1.175</td><td class="r mono">1.145</td><td class="mono muted">2026-09-29</td><td class="muted">stop_next_open</td><td class="r mono neg">−3.09R</td><td class="r mono neg">▼ −$10.21</td></tr><tr class="loss" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono">2026-09-29</td><td><b>LINK</b> <span class="faint" style="font-size:11px">CRYPTO</span></td><td class="r mono">14.53</td><td class="r mono neg">13.95</td><td class="r mono pos">15.69</td><td class="r mono">13.66</td><td class="mono muted">2026-10-02</td><td class="muted">stop_next_open</td><td class="r mono neg">−1.70R</td><td class="r mono neg">▼ −$33.90</td></tr><tr class="win" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono">2026-09-28</td><td><b>NBIS</b> <span class="faint" style="font-size:11px">STOCK</span></td><td class="r mono">231.76</td><td class="r mono neg">227.82</td><td class="r mono pos">254.74</td><td class="r mono">254.74</td><td class="mono muted">2026-10-06</td><td class="muted">target</td><td class="r mono pos">+5.72R</td><td class="r mono pos">▲ +$48.59</td></tr><tr class="loss" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono">2026-09-28</td><td><b>DELL</b> <span class="faint" style="font-size:11px">STOCK</span></td><td class="r mono">547.80</td><td class="r mono neg">546.07</td><td class="r mono pos">595.51</td><td class="r mono">542.73</td><td class="mono muted">2026-09-28</td><td class="muted">stop_next_open</td><td class="r mono neg">−3.52R</td><td class="r mono neg">▼ −$5.62</td></tr><tr class="loss" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono">2026-09-26</td><td><b>XRP</b> <span class="faint" style="font-size:11px">CRYPTO</span></td><td class="r mono">1.544</td><td class="r mono neg">1.515</td><td class="r mono pos">1.658</td><td class="r mono">1.512</td><td class="mono muted">2026-09-26</td><td class="muted">stop_next_open</td><td class="r mono neg">−1.51R</td><td class="r mono neg">▼ −$14.56</td></tr><tr class="win" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono">2026-09-25</td><td><b>LTC</b> <span class="faint" style="font-size:11px">CRYPTO</span></td><td class="r mono">70.01</td><td class="r mono neg">65.32</td><td class="r mono pos">79.39</td><td class="r mono">70.79</td><td class="mono muted">2026-10-05</td><td class="muted">time_exit</td><td class="r mono pos">+0.05R</td><td class="r mono pos">▲ +$1.56</td></tr><tr class="win" data-s="A" data-p="IS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip is">IS</span></td><td class="mono">2026-09-24</td><td><b>MU</b> <span class="faint" style="font-size:11px">STOCK</span></td><td class="r mono">1,044.51</td><td class="r mono neg">1,026.92</td><td class="r mono pos">1,089.29</td><td class="r mono">1,089.29</td><td class="mono muted">2026-09-25</td><td class="muted">target</td><td class="r mono pos">+2.43R</td><td class="r mono pos">▲ +$20.43</td></tr><tr class="loss" data-s="A" data-p="IS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip is">IS</span></td><td class="mono">2026-09-23</td><td><b>ZEC</b> <span class="faint" style="font-size:11px">CRYPTO</span></td><td class="r mono">1,523.46</td><td class="r mono neg">1,513.66</td><td class="r mono pos">1,595.35</td><td class="r mono">1,526.42</td><td class="mono muted">2026-09-23</td><td class="muted">stop_next_open</td><td class="r mono neg">−0.95R</td><td class="r mono neg">▼ −$3.03</td></tr><tr class="win" data-s="A" data-p="IS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip is">IS</span></td><td class="mono">2026-09-15</td><td><b>LITE</b> <span class="faint" style="font-size:11px">STOCK</span></td><td class="r mono">835.03</td><td class="r mono neg">827.68</td><td class="r mono pos">874.86</td><td class="r mono">874.86</td><td class="mono muted">2026-09-16</td><td class="muted">target</td><td class="r mono pos">+5.19R</td><td class="r mono pos">▲ +$22.85</td></tr><tr class="win" data-s="A" data-p="IS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip is">IS</span></td><td class="mono">2026-09-14</td><td><b>DELL</b> <span class="faint" style="font-size:11px">STOCK</span></td><td class="r mono">538.57</td><td class="r mono neg">514.01</td><td class="r mono pos">588.21</td><td class="r mono">588.21</td><td class="mono muted">2026-09-17</td><td class="muted">target</td><td class="r mono pos">+1.96R</td><td class="r mono pos">▲ +$45.08</td></tr><tr class="loss" data-s="A" data-p="IS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip is">IS</span></td><td class="mono">2026-09-14</td><td><b>ORCL</b> <span class="faint" style="font-size:11px">STOCK</span></td><td class="r mono">141.42</td><td class="r mono neg">149.26</td><td class="r mono pos">153.99</td><td class="r mono">141.42</td><td class="mono muted">2026-09-14</td><td class="muted">gap_below_stop_exit_at_open</td><td class="r mono neg">−8.96R</td><td class="r mono neg">▼ −$30.48</td></tr><tr class="loss" data-s="A" data-p="IS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip is">IS</span></td><td class="mono">2026-09-14</td><td><b>MRNA</b> <span class="faint" style="font-size:11px">STOCK</span></td><td class="r mono">142.78</td><td class="r mono neg">141.10</td><td class="r mono pos">156.41</td><td class="r mono">140.37</td><td class="mono muted">2026-09-14</td><td class="muted">stop_next_open</td><td class="r mono neg">−1.60R</td><td class="r mono neg">▼ −$9.44</td></tr><tr class="loss" data-s="A" data-p="IS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip is">IS</span></td><td class="mono">2026-09-12</td><td><b>ZEC</b> <span class="faint" style="font-size:11px">CRYPTO</span></td><td class="r mono">1,151.19</td><td class="r mono neg">1,140.23</td><td class="r mono pos">1,256.98</td><td class="r mono">1,140.47</td><td class="mono muted">2026-09-12</td><td class="muted">stop_next_open</td><td class="r mono neg">−1.82R</td><td class="r mono neg">▼ −$8.65</td></tr><tr class="loss" data-s="A" data-p="IS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip is">IS</span></td><td class="mono">2026-09-10</td><td><b>ZEC</b> <span class="faint" style="font-size:11px">CRYPTO</span></td><td class="r mono">1,244.18</td><td class="r mono neg">1,168.35</td><td class="r mono pos">1,396.16</td><td class="r mono">1,170.25</td><td class="mono muted">2026-09-10</td><td class="muted">stop_next_open</td><td class="r mono neg">−1.11R</td><td class="r mono neg">▼ −$33.71</td></tr></tbody></table></div>
-<div class="empty" id="logempty" hidden><b>No trades match</b><p>Turn a strategy chip back on or pick another period.</p></div></div>
-<p class="faint" style="font-size:12px;margin-top:10px">Showing <span id="logcount" class="mono">22</span> of 22 trades.</p></section><footer><span class="badge">PAPER</span><span>Backtest on paper. Simulated results, not real trades. Source: desk/backtest/results/.</span><span style="margin-left:auto">Page refreshes every 5 minutes · Built 3:23 PM AWST · Sat 10 Oct 2026</span></footer></main>
+<body class="fit"><div class="term"><header class="hdr"><span class="logo" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l4-4 3 3 5-6"/><path d="M10 5h4v4"/></svg></span><h1>Trading Desk</h1><span class="badge" title="Paper trading only. No real orders.">PAPER</span><div class="meta"><span>Updated <b class="mono" style="color:var(--tx);font-weight:500"><!--ts-->4:25 PM AWST · Sat 10 Oct<!--/ts--></b></span><span class="opt sep">|</span><span class="opt">from backtest/results</span></div><nav class="tabs" aria-label="Dashboards"><a href="index.html">Live</a><a href="backtest.html" aria-current=page>Backtest</a></nav></header><div class="caveat"><b>Backtest, not results. One month of data, 22 trades.</b> Simulated on past prices, so look-ahead and overfitting risk is real: in-sample results (8–22 Sep) were used to tune and flatter the strategy; only out-of-sample (23 Sep–8 Oct) counts, and with this few trades even that is mostly noise. The universe comes from October lists (survivorship bias).</div>
+<section class="strip kpis"><div class="striphead">BACKTEST</div><div class="cell" style="box-shadow:inset 0 2px 0 #4F8CFF"><span class="lbl"><b style="color:#4F8CFF">A</b> · OOS P&amp;L</span><span class="v num neg">▼ −$18.93</span><span class="s">IS ▲ +$3.05 · 14 OOS / 8 IS trades</span></div><div class="cell notrun" style="box-shadow:inset 0 2px 0 #A78BFA"><span class="lbl"><b style="color:#A78BFA">B</b> · A + News REPORTED catalyst</span><span class="v fa" style="font-size:13px">not run yet</span></div><div class="cell notrun" style="box-shadow:inset 0 2px 0 #22D3EE"><span class="lbl"><b style="color:#22D3EE">C</b> · A minus heavy hype</span><span class="v fa" style="font-size:13px">not run yet</span></div><div class="cell notrun" style="box-shadow:inset 0 2px 0 #F5A524"><span class="lbl"><b style="color:#F5A524">D</b> · Full desk gate</span><span class="v fa" style="font-size:13px">not run yet</span></div><div class="cell"><span class="lbl">Trades</span><span class="v num">22</span><span class="s">8 IS · 14 OOS</span></div><div class="cell"><span class="lbl">Stats</span><span class="v" style="font-size:12px">computed from trades.csv</span><span class="s">summary.csv not written yet</span></div></section>
+<div class="btgrid">
+<section class="pn p-eq"><div class="ph"><h2>Equity from $10,000</h2><div class="r">dashed: IS/OOS split · shaded: OOS</div></div>
+<div class="chips" role="group" aria-label="Show strategies"><button class="schip" type="button" aria-pressed="true" data-s="A" style="--c:#4F8CFF"><span class="sw"></span><b class="mono">A</b> Scout screen + Charts levels</button><button class="schip" type="button" disabled title="not run yet" style="--c:#A78BFA"><span class="sw"></span><b class="mono">B</b> · not run</button><button class="schip" type="button" disabled title="not run yet" style="--c:#22D3EE"><span class="sw"></span><b class="mono">C</b> · not run</button><button class="schip" type="button" disabled title="not run yet" style="--c:#F5A524"><span class="sw"></span><b class="mono">D</b> · not run</button></div>
+<div class="pb" style="position:relative;padding:6px 8px 4px;overflow:hidden"><canvas id="eq" role="img" aria-label="Equity curves by strategy"></canvas></div></section>
+<section class="pn p-cmp"><div class="ph"><h2>Strategy comparison</h2><div class="r">highlight = best OOS value per column</div></div><div class="pb tbl"><table class="comp"><thead><tr><th rowspan="2" style="vertical-align:bottom">Strategy · ranked by OOS P&amp;L</th><th colspan="6" class="grp oosh">Out-of-sample · 23 Sep–8 Oct · evidence</th><th colspan="6" class="grp">In-sample · 8–22 Sep · flatters</th></tr><tr><th class="r oosh">N</th><th class="r oosh">Win</th><th class="r oosh">PF</th><th class="r oosh">Avg R</th><th class="r oosh">Max DD</th><th class="r oosh">P&amp;L</th><th class="r">N</th><th class="r">Win</th><th class="r">PF</th><th class="r">Avg R</th><th class="r">Max DD</th><th class="r">P&amp;L</th></tr></thead><tbody><tr data-s="A"><td><span class="fa mono">1</span> <span class="sw" style="background:#4F8CFF"></span><b class="mono" style="color:#4F8CFF">A</b> <span class="mu">Scout screen + Charts levels</span></td><td class="r mono">14</td><td class="r mono">29%</td><td class="r mono">0.89</td><td class="r mono neg">−1.53R</td><td class="r mono neg">−$101.77</td><td class="r mono neg">▼ −$18.93</td><td class="r mono dim">8</td><td class="r mono dim">38%</td><td class="r mono dim">1.04</td><td class="r mono dim neg">−0.61R</td><td class="r mono neg dim">−$82.28</td><td class="r mono pos dim">▲ +$3.05</td></tr><tr class="notrun"><td><span class="fa mono">–</span> <span class="sw" style="background:#A78BFA"></span><b class="mono" style="color:#A78BFA">B</b> <span class="mu">A + News REPORTED catalyst</span></td><td colspan="12" class="fa">not run yet</td></tr><tr class="notrun"><td><span class="fa mono">–</span> <span class="sw" style="background:#22D3EE"></span><b class="mono" style="color:#22D3EE">C</b> <span class="mu">A minus heavy hype</span></td><td colspan="12" class="fa">not run yet</td></tr><tr class="notrun"><td><span class="fa mono">–</span> <span class="sw" style="background:#F5A524"></span><b class="mono" style="color:#F5A524">D</b> <span class="mu">Full desk gate</span></td><td colspan="12" class="fa">not run yet</td></tr></tbody></table><div class="ph" style="border-top:1px solid var(--bd);border-bottom:0"><h2>Method</h2><div class="r">locked before scoring</div></div><div class="pad" style="padding-top:0"><dl class="facts"><dt>Window</dt><dd>Signals 8 Sep–8 Oct 2026</dd><dt>In-sample</dt><dd>8–22 Sep · tuning allowed (researcher-locked settings only)</dd><dt>Out-of-sample</dt><dd>23 Sep–8 Oct · reported separately; the only evidence</dd><dt>Universe</dt><dd>Fixed as of Fri 5 Sep: watchlist + top 30 US stocks + top 15 coins by 30-day $ volume; no stocks &lt;$5, no coins &lt;30 days</dd><dt>Costs · stocks</dt><dd>0.1% slippage each way</dd><dt>Costs · crypto</dt><dd>0.3% slippage + 0.1% fee each way</dd><dt>Stops</dt><dd>Filled at the next bar&#x27;s open</dd><dt>Sizing</dt><dd>$500 per trade · $100 max loss · start $10,000</dd></dl></div></div></section>
+<section class="pn p-log"><div class="ph"><h2>Trade log</h2><div class="seg" role="group" aria-label="Period"><button type="button" data-per="ALL" aria-pressed="true">All</button><button type="button" data-per="IS" aria-pressed="false">IS</button><button type="button" data-per="OOS" aria-pressed="false">OOS</button></div>
+<div class="r">showing <span id="logcount" class="mono">22</span> / 22 · filter with the strategy chips</div></div>
+<div class="pb tbl"><table id="log"><thead><tr><th>Strat</th><th>Period</th><th>Signal</th><th>Entry date</th><th>Ticker</th><th class="r">Entry</th><th class="r">Stop</th><th class="r">Target</th><th class="r">Exit</th><th class="r">Move</th><th>Exit date</th><th>Reason</th><th class="r">R</th><th class="r">P&amp;L</th></tr></thead><tbody><tr class="loss" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono mu">2026-10-07</td><td class="mono">2026-10-08</td><td><b>NBIS</b> <span class="fa" style="font-size:9.5px">STOCK</span></td><td class="r mono">233.13</td><td class="r mono neg">234.71</td><td class="r mono pos">249.19</td><td class="r mono">233.13</td><td class="r mono neu">+0.00%</td><td class="mono mu">2026-10-08</td><td class="mu">gap below stop exit at open</td><td class="r mono neg">−2.57R</td><td class="r mono neg">▼ −$7.08</td></tr><tr class="loss" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono mu">2026-10-06</td><td class="mono">2026-10-07</td><td><b>STX</b> <span class="fa" style="font-size:9.5px">STOCK</span></td><td class="r mono">784.25</td><td class="r mono neg">770.82</td><td class="r mono pos">838.60</td><td class="r mono">781.32</td><td class="r mono neg">-0.37%</td><td class="mono mu">2026-10-08</td><td class="mu">stop next open</td><td class="r mono neg">−0.22R</td><td class="r mono neg">▼ −$2.87</td></tr><tr class="loss" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono mu">2026-10-06</td><td class="mono">2026-10-07</td><td><b>MRNA</b> <span class="fa" style="font-size:9.5px">STOCK</span></td><td class="r mono">183.01</td><td class="r mono neg">185.34</td><td class="r mono pos">208.90</td><td class="r mono">183.01</td><td class="r mono neu">+0.00%</td><td class="mono mu">2026-10-07</td><td class="mu">gap below stop exit at open</td><td class="r mono neg">−5.04R</td><td class="r mono neg">▼ −$9.07</td></tr><tr class="loss" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono mu">2026-10-02</td><td class="mono">2026-10-06</td><td><b>STX</b> <span class="fa" style="font-size:9.5px">STOCK</span></td><td class="r mono">848.99</td><td class="r mono neg">845.70</td><td class="r mono pos">875.75</td><td class="r mono">821.03</td><td class="r mono neg">-3.29%</td><td class="mono mu">2026-10-06</td><td class="mu">stop next open</td><td class="r mono neg">−8.96R</td><td class="r mono neg">▼ −$17.47</td></tr><tr class="loss" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono mu">2026-10-05</td><td class="mono">2026-10-06</td><td><b>WDC</b> <span class="fa" style="font-size:9.5px">STOCK</span></td><td class="r mono">428.62</td><td class="r mono neg">436.69</td><td class="r mono pos">465.90</td><td class="r mono">428.62</td><td class="r mono neu">+0.00%</td><td class="mono mu">2026-10-06</td><td class="mu">gap below stop exit at open</td><td class="r mono neg">−3.68R</td><td class="r mono neg">▼ −$13.98</td></tr><tr class="loss" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono mu">2026-10-02</td><td class="mono">2026-10-03</td><td><b>AAVE</b> <span class="fa" style="font-size:9.5px">CRYPTO</span></td><td class="r mono">178.14</td><td class="r mono neg">164.00</td><td class="r mono pos">206.43</td><td class="r mono">161.29</td><td class="r mono neg">-9.46%</td><td class="mono mu">2026-10-08</td><td class="mu">stop next open</td><td class="r mono neg">−1.29R</td><td class="r mono neg">▼ −$51.30</td></tr><tr class="win" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono mu">2026-09-30</td><td class="mono">2026-10-01</td><td><b>MRNA</b> <span class="fa" style="font-size:9.5px">STOCK</span></td><td class="r mono">186.01</td><td class="r mono neg">184.03</td><td class="r mono pos">199.25</td><td class="r mono">199.25</td><td class="r mono pos">+7.12%</td><td class="mono mu">2026-10-01</td><td class="mu">target</td><td class="r mono pos">+2.58R</td><td class="r mono pos">▲ +$34.58</td></tr><tr class="win" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono mu">2026-09-29</td><td class="mono">2026-09-30</td><td><b>AAVE</b> <span class="fa" style="font-size:9.5px">CRYPTO</span></td><td class="r mono">164.49</td><td class="r mono neg">153.57</td><td class="r mono pos">186.33</td><td class="r mono">186.33</td><td class="r mono pos">+13.28%</td><td class="mono mu">2026-10-02</td><td class="mu">target</td><td class="r mono pos">+1.88R</td><td class="r mono pos">▲ +$62.40</td></tr><tr class="loss" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono mu">2026-09-28</td><td class="mono">2026-09-29</td><td><b>SUI</b> <span class="fa" style="font-size:9.5px">CRYPTO</span></td><td class="r mono">1.159</td><td class="r mono neg">1.152</td><td class="r mono pos">1.175</td><td class="r mono">1.145</td><td class="r mono neg">-1.24%</td><td class="mono mu">2026-09-29</td><td class="mu">stop next open</td><td class="r mono neg">−3.09R</td><td class="r mono neg">▼ −$10.21</td></tr><tr class="loss" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono mu">2026-09-28</td><td class="mono">2026-09-29</td><td><b>LINK</b> <span class="fa" style="font-size:9.5px">CRYPTO</span></td><td class="r mono">14.53</td><td class="r mono neg">13.95</td><td class="r mono pos">15.69</td><td class="r mono">13.66</td><td class="r mono neg">-5.98%</td><td class="mono mu">2026-10-02</td><td class="mu">stop next open</td><td class="r mono neg">−1.70R</td><td class="r mono neg">▼ −$33.90</td></tr><tr class="win" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono mu">2026-09-24</td><td class="mono">2026-09-28</td><td><b>NBIS</b> <span class="fa" style="font-size:9.5px">STOCK</span></td><td class="r mono">231.76</td><td class="r mono neg">227.82</td><td class="r mono pos">254.74</td><td class="r mono">254.74</td><td class="r mono pos">+9.92%</td><td class="mono mu">2026-10-06</td><td class="mu">target</td><td class="r mono pos">+5.72R</td><td class="r mono pos">▲ +$48.59</td></tr><tr class="loss" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono mu">2026-09-25</td><td class="mono">2026-09-28</td><td><b>DELL</b> <span class="fa" style="font-size:9.5px">STOCK</span></td><td class="r mono">547.80</td><td class="r mono neg">546.07</td><td class="r mono pos">595.51</td><td class="r mono">542.73</td><td class="r mono neg">-0.93%</td><td class="mono mu">2026-09-28</td><td class="mu">stop next open</td><td class="r mono neg">−3.52R</td><td class="r mono neg">▼ −$5.62</td></tr><tr class="loss" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono mu">2026-09-25</td><td class="mono">2026-09-26</td><td><b>XRP</b> <span class="fa" style="font-size:9.5px">CRYPTO</span></td><td class="r mono">1.544</td><td class="r mono neg">1.515</td><td class="r mono pos">1.658</td><td class="r mono">1.512</td><td class="r mono neg">-2.11%</td><td class="mono mu">2026-09-26</td><td class="mu">stop next open</td><td class="r mono neg">−1.51R</td><td class="r mono neg">▼ −$14.56</td></tr><tr class="win" data-s="A" data-p="OOS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip oos">OOS</span></td><td class="mono mu">2026-09-24</td><td class="mono">2026-09-25</td><td><b>LTC</b> <span class="fa" style="font-size:9.5px">CRYPTO</span></td><td class="r mono">70.01</td><td class="r mono neg">65.32</td><td class="r mono pos">79.39</td><td class="r mono">70.79</td><td class="r mono pos">+1.11%</td><td class="mono mu">2026-10-05</td><td class="mu">time exit</td><td class="r mono pos">+0.05R</td><td class="r mono pos">▲ +$1.56</td></tr><tr class="win" data-s="A" data-p="IS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip is">IS</span></td><td class="mono mu">2026-09-22</td><td class="mono">2026-09-24</td><td><b>MU</b> <span class="fa" style="font-size:9.5px">STOCK</span></td><td class="r mono">1,044.51</td><td class="r mono neg">1,026.92</td><td class="r mono pos">1,089.29</td><td class="r mono">1,089.29</td><td class="r mono pos">+4.29%</td><td class="mono mu">2026-09-25</td><td class="mu">target</td><td class="r mono pos">+2.43R</td><td class="r mono pos">▲ +$20.43</td></tr><tr class="loss" data-s="A" data-p="IS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip is">IS</span></td><td class="mono mu">2026-09-22</td><td class="mono">2026-09-23</td><td><b>ZEC</b> <span class="fa" style="font-size:9.5px">CRYPTO</span></td><td class="r mono">1,523.46</td><td class="r mono neg">1,513.66</td><td class="r mono pos">1,595.35</td><td class="r mono">1,526.42</td><td class="r mono pos">+0.19%</td><td class="mono mu">2026-09-23</td><td class="mu">stop next open</td><td class="r mono neg">−0.95R</td><td class="r mono neg">▼ −$3.03</td></tr><tr class="win" data-s="A" data-p="IS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip is">IS</span></td><td class="mono mu">2026-09-14</td><td class="mono">2026-09-15</td><td><b>LITE</b> <span class="fa" style="font-size:9.5px">STOCK</span></td><td class="r mono">835.03</td><td class="r mono neg">827.68</td><td class="r mono pos">874.86</td><td class="r mono">874.86</td><td class="r mono pos">+4.77%</td><td class="mono mu">2026-09-16</td><td class="mu">target</td><td class="r mono pos">+5.19R</td><td class="r mono pos">▲ +$22.85</td></tr><tr class="win" data-s="A" data-p="IS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip is">IS</span></td><td class="mono mu">2026-09-11</td><td class="mono">2026-09-14</td><td><b>DELL</b> <span class="fa" style="font-size:9.5px">STOCK</span></td><td class="r mono">538.57</td><td class="r mono neg">514.01</td><td class="r mono pos">588.21</td><td class="r mono">588.21</td><td class="r mono pos">+9.22%</td><td class="mono mu">2026-09-17</td><td class="mu">target</td><td class="r mono pos">+1.96R</td><td class="r mono pos">▲ +$45.08</td></tr><tr class="loss" data-s="A" data-p="IS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip is">IS</span></td><td class="mono mu">2026-09-11</td><td class="mono">2026-09-14</td><td><b>ORCL</b> <span class="fa" style="font-size:9.5px">STOCK</span></td><td class="r mono">141.42</td><td class="r mono neg">149.26</td><td class="r mono pos">153.99</td><td class="r mono">141.42</td><td class="r mono neu">+0.00%</td><td class="mono mu">2026-09-14</td><td class="mu">gap below stop exit at open</td><td class="r mono neg">−8.96R</td><td class="r mono neg">▼ −$30.48</td></tr><tr class="loss" data-s="A" data-p="IS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip is">IS</span></td><td class="mono mu">2026-09-11</td><td class="mono">2026-09-14</td><td><b>MRNA</b> <span class="fa" style="font-size:9.5px">STOCK</span></td><td class="r mono">142.78</td><td class="r mono neg">141.10</td><td class="r mono pos">156.41</td><td class="r mono">140.37</td><td class="r mono neg">-1.69%</td><td class="mono mu">2026-09-14</td><td class="mu">stop next open</td><td class="r mono neg">−1.60R</td><td class="r mono neg">▼ −$9.44</td></tr><tr class="loss" data-s="A" data-p="IS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip is">IS</span></td><td class="mono mu">2026-09-11</td><td class="mono">2026-09-12</td><td><b>ZEC</b> <span class="fa" style="font-size:9.5px">CRYPTO</span></td><td class="r mono">1,151.19</td><td class="r mono neg">1,140.23</td><td class="r mono pos">1,256.98</td><td class="r mono">1,140.47</td><td class="r mono neg">-0.93%</td><td class="mono mu">2026-09-12</td><td class="mu">stop next open</td><td class="r mono neg">−1.82R</td><td class="r mono neg">▼ −$8.65</td></tr><tr class="loss" data-s="A" data-p="IS"><td><span class="sw" style="background:#4F8CFF"></span><b class="mono">A</b></td><td><span class="chip is">IS</span></td><td class="mono mu">2026-09-09</td><td class="mono">2026-09-10</td><td><b>ZEC</b> <span class="fa" style="font-size:9.5px">CRYPTO</span></td><td class="r mono">1,244.18</td><td class="r mono neg">1,168.35</td><td class="r mono pos">1,396.16</td><td class="r mono">1,170.25</td><td class="r mono neg">-5.94%</td><td class="mono mu">2026-09-10</td><td class="mu">stop next open</td><td class="r mono neg">−1.11R</td><td class="r mono neg">▼ −$33.71</td></tr></tbody></table>
+<div class="empty" id="logempty" hidden><b>No trades match.</b> Turn a strategy chip back on or pick another period.</div></div></section>
+</div><footer><span class="badge">PAPER</span><span>Backtest on paper: simulated results on past prices, not real trades. Source: desk/backtest/results/.</span><span class="r">Page reloads every 120s · built <!--ts-->4:25 PM AWST · Sat 10 Oct<!--/ts--> · all times AWST (UTC+8)</span></footer></div>
 <script>
 const RM=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const nf2=v=>Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 const fmt={
- money:v=>'$'+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),
- smoney:v=>Math.abs(v)<0.005?'± $0.00':(v>0?'▲ +$':'▼ −$')+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),
+ money:v=>'$'+nf2(v),
+ smoney:v=>Math.abs(v)<0.005?'± $0.00':(v>0?'▲ +$':'▼ −$')+nf2(v),
  spct:v=>Math.abs(v)<0.005?'± 0.00%':(v>0?'▲ +':'▼ −')+Math.abs(v).toFixed(2)+'%',
- pct0:v=>Math.round(v)+'%',
- int:v=>String(Math.round(v)),
- x:v=>v.toFixed(2)+'×'
+ pct0:v=>Math.round(v)+'%', int:v=>String(Math.round(v)),
+ px:v=>{const a=Math.abs(v),d=a<1?4:a<10?3:2;return v.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});}
 };
+const cl=v=>Math.abs(v)<0.005?'neu':v>0?'pos':'neg';
 function countUp(){
  if(RM)return;
  document.querySelectorAll('[data-to]').forEach(el=>{
@@ -157,19 +156,34 @@ function countUp(){
 }
 function chartDefaults(){
  if(!window.Chart)return false;
- Chart.defaults.color='#8B98A9';Chart.defaults.font.family="Inter,system-ui,sans-serif";Chart.defaults.font.size=11;
- Chart.defaults.borderColor='#1C2430';
+ Chart.defaults.color='#8B98A9';Chart.defaults.font.family="Inter,system-ui,sans-serif";Chart.defaults.font.size=10;Chart.defaults.borderColor='#1C2430';
  return true;
 }
-const TOOLTIP={backgroundColor:'#18202B',borderColor:'#232D3A',borderWidth:1,cornerRadius:8,padding:10,titleColor:'#E6EDF3',bodyColor:'#E6EDF3',
- titleFont:{family:'Inter',weight:'600',size:12},bodyFont:{family:"'JetBrains Mono',monospace",size:12},boxPadding:4,usePointStyle:true};
-document.addEventListener('DOMContentLoaded',countUp);
+const TOOLTIP={backgroundColor:'#18202B',borderColor:'#232D3A',borderWidth:1,cornerRadius:8,padding:8,titleColor:'#E6EDF3',bodyColor:'#E6EDF3',
+ titleFont:{family:'Inter',weight:'600',size:11},bodyFont:{family:"'JetBrains Mono',monospace",size:11},boxPadding:4,usePointStyle:true};
+function countdowns(){
+ const now=Date.now();
+ document.querySelectorAll('[data-until]').forEach(el=>{
+  const t=Date.parse(el.dataset.until);if(!isFinite(t))return;let s=Math.round((t-now)/1000);
+  if(s<=0){el.textContent='expired';el.classList.add('neg');return;}
+  const d=Math.floor(s/86400);s%=86400;const h=Math.floor(s/3600);s%=3600;const m=Math.floor(s/60);
+  el.textContent=(d?d+'d ':'')+String(h).padStart(d?2:1,'0')+'h '+String(m).padStart(2,'0')+'m';
+  el.classList.toggle('wrn',t-now<86400000);
+ });
+}
+function tabs(){
+ document.querySelectorAll('[role=tablist]').forEach(tl=>{
+  tl.querySelectorAll('[role=tab]').forEach(b=>b.addEventListener('click',()=>{
+   tl.querySelectorAll('[role=tab]').forEach(x=>{x.setAttribute('aria-selected',x===b);document.getElementById(x.getAttribute('aria-controls')).hidden=x!==b;});
+  }));
+ });
+}
+document.addEventListener('DOMContentLoaded',()=>{countUp();countdowns();tabs();setInterval(countdowns,30000);});
 
-const L=["8 Sep", "9 Sep", "10 Sep", "11 Sep", "12 Sep", "13 Sep", "14 Sep", "15 Sep", "16 Sep", "17 Sep", "18 Sep", "19 Sep", "20 Sep", "21 Sep", "22 Sep", "23 Sep", "24 Sep", "25 Sep", "26 Sep", "27 Sep", "28 Sep", "29 Sep", "30 Sep", "1 Oct", "2 Oct", "3 Oct", "4 Oct", "5 Oct", "6 Oct", "7 Oct", "8 Oct"],DS=[{"k": "A", "c": "#4F8CFF", "d": [10000.0, 10000.0, 9966.29, 9966.29, 9957.64, 9957.64, 9917.72, 9917.72, 9940.57, 9985.65, 9985.65, 9985.65, 9985.65, 9985.65, 9985.65, 9982.62, 9982.62, 10003.05, 9988.49, 9988.49, 9982.87, 9972.66, 9972.66, 10007.24, 10035.74, 10035.74, 10035.74, 10037.3, 10054.44, 10045.37, 9984.12]}],SPLIT=15;
-let chart=null;
+const L=["8 Sep", "9 Sep", "10 Sep", "11 Sep", "12 Sep", "13 Sep", "14 Sep", "15 Sep", "16 Sep", "17 Sep", "18 Sep", "19 Sep", "20 Sep", "21 Sep", "22 Sep", "23 Sep", "24 Sep", "25 Sep", "26 Sep", "27 Sep", "28 Sep", "29 Sep", "30 Sep", "1 Oct", "2 Oct", "3 Oct", "4 Oct", "5 Oct", "6 Oct", "7 Oct", "8 Oct"],DS=[{"k": "A", "c": "#4F8CFF", "d": [10000.0, 10000.0, 9966.29, 9966.29, 9957.64, 9957.64, 9917.72, 9917.72, 9940.57, 9985.65, 9985.65, 9985.65, 9985.65, 9985.65, 9985.65, 9982.62, 9982.62, 10003.05, 9988.49, 9988.49, 9982.87, 9972.66, 9972.66, 10007.24, 10035.74, 10035.74, 10035.74, 10037.3, 10054.44, 10045.37, 9984.12]}],SPLIT=15;let chart=null;
 const oosBand={id:'oos',beforeDatasetsDraw(c){const x=c.scales.x,a=c.chartArea,g=c.ctx;if(!a)return;const x0=x.getPixelForValue(SPLIT);g.save();
  g.fillStyle='rgba(79,140,255,.06)';g.fillRect(x0,a.top,a.right-x0,a.bottom-a.top);g.strokeStyle='#5B6878';g.setLineDash([4,4]);g.lineWidth=1;g.beginPath();g.moveTo(x0,a.top);g.lineTo(x0,a.bottom);g.stroke();g.setLineDash([]);
- g.fillStyle='#8B98A9';g.font='500 11px Inter,sans-serif';g.textBaseline='top';g.textAlign='right';g.fillText('IS',x0-8,a.top+6);g.textAlign='left';g.fillStyle='#4F8CFF';g.fillText('OOS',x0+8,a.top+6);g.restore();}};
+ g.font='500 10px Inter,sans-serif';g.textBaseline='top';g.textAlign='right';g.fillStyle='#8B98A9';g.fillText('IS',x0-6,a.top+4);g.textAlign='left';g.fillStyle='#4F8CFF';g.fillText('OOS',x0+6,a.top+4);g.restore();}};
 if(chartDefaults()){
  chart=new Chart(document.getElementById('eq'),{type:'line',plugins:[oosBand],data:{labels:L,datasets:[...DS.map(s=>({label:s.k,data:s.d,borderColor:s.c,backgroundColor:s.c,borderWidth:2,tension:.25,pointRadius:0,pointHoverRadius:4})),
   {label:'Start',data:L.map(()=>10000),borderColor:'#5B6878',borderWidth:1,borderDash:[4,4],pointRadius:0,pointHoverRadius:0}]},
@@ -181,10 +195,10 @@ let per='ALL';
 function apply(){
  const on=new Set([...document.querySelectorAll('.schip[aria-pressed=true]')].map(b=>b.dataset.s));let n=0;
  document.querySelectorAll('#log tbody tr').forEach(r=>{const v=on.has(r.dataset.s)&&(per==='ALL'||r.dataset.p===per);r.hidden=!v;if(v)n++;});
- document.querySelectorAll('table.comp tbody tr').forEach(r=>r.classList.toggle('off',!on.has(r.dataset.s)));
+ document.querySelectorAll('table.comp tbody tr[data-s]').forEach(r=>r.classList.toggle('off',!on.has(r.dataset.s)));
  document.getElementById('logcount').textContent=n;document.getElementById('logempty').hidden=n>0;document.getElementById('log').hidden=n===0;
  if(chart){chart.data.datasets.forEach(d=>{if(d.label!=='Start')d.hidden=!on.has(d.label);});chart.update('none');}
 }
-document.querySelectorAll('.schip').forEach(b=>b.addEventListener('click',()=>{b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')==='true'?'false':'true');apply();}));
+document.querySelectorAll('.schip:not([disabled])').forEach(b=>b.addEventListener('click',()=>{b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')==='true'?'false':'true');apply();}));
 document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{per=b.dataset.per;document.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));apply();}));
 </script></body></html>
