@@ -1,23 +1,171 @@
-<!doctype html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=refresh content=300>
-<title>Trading Desk — Paper Dashboard</title><script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
-<style>body{font-family:system-ui,sans-serif;margin:0;background:#0f1115;color:#e6e6e6}main{max-width:1100px;margin:auto;padding:20px}h1{margin:0 0 4px}.muted,.s{color:#8a8f98;font-size:13px}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:18px 0}.card{background:#181b22;border-radius:10px;padding:14px}.k{color:#8a8f98;font-size:13px}.v{font-size:22px;font-weight:600;margin:4px 0}
-table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0 22px}th,td{padding:6px 8px;border-bottom:1px solid #262a33;text-align:left;vertical-align:top}th{color:#8a8f98}.pos{color:#3ecf8e}.neg{color:#ff6b6b}section{background:#14171d;border-radius:10px;padding:14px 16px;margin:14px 0}.banner{background:#3a2f12;color:#f5d27a;padding:8px 12px;border-radius:8px;font-size:13px}</style></head><body><main>
-<h1>Trading Desk: Paper Dashboard</h1><div class=muted>Updated 2026-10-10 14:38 AWST. Paper only: no real orders. Source: desk/paper-ledger.csv.</div>
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="300">
+<meta name="color-scheme" content="dark"><meta name="theme-color" content="#0B0F14">
+<title>Trading Desk · Live paper dashboard</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script><style>
+:root{--bg:#0B0F14;--sf:#121821;--sf2:#18202B;--bd:#232D3A;--bdh:#2E3A4A;--grid:#1C2430;--tx:#E6EDF3;--mu:#8B98A9;--fa:#5B6878;--ac:#4F8CFF;
+--up:#22C55E;--upt:#4ADE80;--dn:#F04452;--dnt:#FF6B78;--warn:#F5A524;--neu:#64748B;
+--upbg:rgba(34,197,94,.12);--dnbg:rgba(240,68,82,.12);--warnbg:rgba(245,165,36,.12);
+--sA:#4F8CFF;--sB:#A78BFA;--sC:#22D3EE;--sD:#F5A524}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--ac);text-decoration:none}a:hover{text-decoration:underline}
+.num,.mono{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;font-feature-settings:"tnum";font-variant-numeric:tabular-nums}
+.wrap{max-width:1280px;margin:0 auto;padding:24px}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
+.s3{grid-column:span 3}.s4{grid-column:span 4}.s6{grid-column:span 6}.s8{grid-column:span 8}.s12{grid-column:span 12}
+.label{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mu);font-weight:500}
+.muted{color:var(--mu)}.faint{color:var(--fa)}
+.pos{color:var(--upt)}.neg{color:var(--dnt)}.neu{color:var(--mu)}
+h1{font-size:16px;font-weight:600;margin:0;letter-spacing:-.005em}
+h2{font-size:20px;font-weight:600;margin:0;letter-spacing:-.01em}
+h3{font-size:16px;font-weight:600;margin:0}
+/* header */
+.hdr{position:sticky;top:0;z-index:50;background:rgba(18,24,33,.72);-webkit-backdrop-filter:saturate(140%) blur(12px);backdrop-filter:saturate(140%) blur(12px);border-bottom:1px solid var(--bd)}
+.hdr .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:12px;padding-bottom:12px}
+.brand{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0}
+.logo{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#4F8CFF,#A78BFA);display:grid;place-items:center;flex:none}
+.logo svg{width:16px;height:16px}
+.upd{font-size:12px;color:var(--mu);white-space:nowrap}
+.badge{font:600 11px/1 Inter,sans-serif;letter-spacing:.08em;padding:4px 8px;border-radius:999px;border:1px solid var(--warn);color:var(--warn);background:var(--warnbg)}
+.tabs{display:flex;background:var(--sf2);border:1px solid var(--bd);border-radius:10px;padding:3px;flex:none}
+.tabs a{padding:6px 14px;border-radius:7px;color:var(--mu);font-weight:500;font-size:13px;transition:color .15s,background .15s;text-decoration:none}
+.tabs a:hover{color:var(--tx)}
+.tabs a[aria-current=page]{background:var(--sf);color:var(--tx);box-shadow:inset 0 0 0 1px var(--bd)}
+/* cards */
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:18px;transition:border-color .15s;min-width:0}
+.card:hover{border-color:var(--bdh)}
+.fade{animation:up .45s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0) * 40ms)}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.sec{margin-top:28px}
+.sechead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.sechead .sub{font-size:13px;color:var(--mu)}
+.kpi{font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.15;margin-top:6px;white-space:nowrap}
+.hero{font-size:40px;font-weight:700;letter-spacing:-.03em;line-height:1.1;margin:8px 0 6px}
+.chip{display:inline-flex;align-items:center;gap:6px;font:600 11px/1 Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:5px 8px;border-radius:999px;border:1px solid var(--bd);color:var(--mu);white-space:nowrap}
+.chip.long{color:var(--upt);border-color:rgba(34,197,94,.45);background:var(--upbg)}
+.chip.short{color:var(--dnt);border-color:rgba(240,68,82,.45);background:var(--dnbg)}
+.chip.reject{color:var(--dnt);border-color:var(--dn);background:transparent}
+.chip.skip{color:var(--mu);border-color:var(--neu);background:transparent}
+.chip.warn{color:var(--warn);border-color:rgba(245,165,36,.5);background:var(--warnbg)}
+.chip.is{color:var(--mu);border-color:var(--neu)}
+.chip.oos{color:var(--ac);border-color:rgba(79,140,255,.5);background:rgba(79,140,255,.10)}
+/* tables */
+.tbl{position:relative;border:1px solid var(--bd);border-radius:14px;background:var(--sf);overflow:hidden}
+.tbl .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{position:sticky;top:0;background:var(--sf2);color:var(--mu);font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;text-align:left;padding:10px 14px;white-space:nowrap;border-bottom:1px solid var(--bd)}
+td{height:40px;padding:8px 14px;border-bottom:1px solid var(--grid);vertical-align:middle;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+tbody tr{transition:background .15s}
+tbody tr:hover td{background:var(--sf2)}
+td.r,th.r{text-align:right}
+td.wrapc{white-space:normal;min-width:320px;color:var(--mu);line-height:1.45}
+tr.win td:first-child{box-shadow:inset 2px 0 0 var(--up)}
+tr.loss td:first-child{box-shadow:inset 2px 0 0 var(--dn)}
+.muted-tbl td{color:var(--mu)}.muted-tbl td.tk{color:var(--tx)}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:36px 20px;color:var(--mu)}
+.empty .ico{width:40px;height:40px;border-radius:12px;background:var(--sf2);border:1px solid var(--bd);display:grid;place-items:center;margin-bottom:6px}
+.empty b{color:var(--tx);font-weight:600;font-size:14px}
+.empty p{margin:0;max-width:420px;font-size:13px}
+footer{margin-top:36px;padding:20px 0 8px;border-top:1px solid var(--bd);display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--fa);font-size:12px}
+@media(max-width:900px){
+ .wrap{padding:16px}
+ .s3,.s4,.s6,.s8,.s12{grid-column:1/-1}
+ .kpi{font-size:22px}.hero{font-size:32px}
+ .upd .long{display:none}
+ .tbl th:first-child,.tbl td:first-child{position:sticky;left:0;z-index:2;background:var(--sf)}
+ .tbl th:first-child{z-index:3;background:var(--sf2)}
+ .tbl tbody tr:hover td:first-child{background:var(--sf2)}
+ .tbl::after{content:"";position:absolute;top:0;right:0;bottom:0;width:28px;pointer-events:none;background:linear-gradient(90deg,rgba(18,24,33,0),var(--sf));border-radius:0 14px 14px 0}
+}
+@media(max-width:560px){
+ .hdr .wrap{flex-wrap:wrap;row-gap:8px}
+ .tabs{order:3;width:100%}.tabs a{flex:1;text-align:center}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{animation:none!important;transition:none!important}
+}
 
-<div class=cards>
-<div class=card><div class=k>Paper balance</div><div class=v>$10,000.00</div><div class=s>start $10,000</div></div>
-<div class=card><div class=k>Realized P&amp;L</div><div class='v '>$0.00</div><div class=s>unrealized $0.00</div></div>
-<div class=card><div class=k>Win rate</div><div class=v>—</div><div class=s>0 of 0 closed</div></div>
-<div class=card><div class=k>Avg win / avg loss</div><div class=v>— / —</div><div class=s>&nbsp;</div></div>
-<div class=card><div class=k>Open / passed</div><div class=v>1 / 4</div><div class=s>ideas we didn't take</div></div>
-</div>
-<section><h2>Paper balance over time</h2><canvas id=bal height=90></canvas></section>
-<section><h2>Open paper trades</h2><table><tr><th>date</th><th>lead_id</th><th>ticker</th><th>side</th><th>entry</th><th>stop</th><th>target</th><th>size</th><th>pnl</th><th>note</th></tr><tr><td class=''>2026-10-10</td><td class=''>L002</td><td class=''>STRK</td><td class=''>long</td><td class=''>0.0730</td><td class=''>0.0680</td><td class=''>0.0830</td><td class=''>250</td><td class=''></td><td class=''>PAPER BUY by Yong Sen at 13:47 AWST on Skeptic REDUCE terms (0.0730 limit). Binance price at 13:47 AWST was 0.0709, below the limit; Charts says the fill would be ~0.0710. Fill price pending Yong Sen confirmation. Off watchlist. 15 Oct unlock of ~127M STRK falls inside the hold.</td></tr></table></section>
-<section><h2>Closed paper trades</h2><p class=muted>None yet.</p></section>
-<section><h2>Ideas we passed on (SKIP / REJECT)</h2><table><tr><th>date</th><th>lead_id</th><th>ticker</th><th>status</th><th>note</th></tr><tr><td class=''>2026-10-10</td><td class=''>L001</td><td class=''>KAIA</td><td class=''>rejected</td><td class=''>Skeptic REJECT: +62.3% on 13.7x vol right after the Upbit listing looks like sell-the-news; heavy Telegram signal spam and new accounts posting profit claims. Ref $0.0610 (Scout, CoinGecko 09:52 AWST).</td></tr><tr><td class=''>2026-10-10</td><td class=''>L004</td><td class=''>TMUS</td><td class=''>rejected</td><td class=''>Skeptic REJECT: falling knife at a fresh 1-year low with no support in the data; Charts found no setup. Ref $148.58, -13.3% (Scout, Yahoo).</td></tr><tr><td class=''>2026-10-10</td><td class=''>L005</td><td class=''>ASTS</td><td class=''>rejected</td><td class=''>Skeptic REJECT: counter-trend after losing the spectrum to SpaceX; the Roth $108 target came before the news; heavy pump-group hype. Ref $50.97, -10.5% (Scout, Yahoo).</td></tr><tr><td class=''>2026-10-10</td><td class=''>TEST</td><td class=''>AAPL</td><td class=''>rejected</td><td class=''>Test lead with no Scout ID. Skeptic REJECT: &#x27;$500 buyout tomorrow&#x27; X rumor had no source, no 8-K and no posts repeating it. Ref close $336.64, -1.11% (Scout, Yahoo).</td></tr></table></section>
+.chart-note{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mu);background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:6px 10px;margin-bottom:10px;align-self:flex-start}
+.dotn{width:6px;height:6px;border-radius:50%;background:var(--neu);flex:none}
+.chart-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;pointer-events:none;color:var(--mu);font-size:13px;text-align:center;padding-top:16%}
+.chart-empty b{color:var(--tx);font-weight:600;font-size:14px;background:rgba(18,24,33,.85);padding:2px 8px;border-radius:6px}
+.chart-empty span{background:rgba(18,24,33,.85);padding:0 8px;border-radius:6px}
+.otc{display:flex;flex-direction:column;gap:12px}
+.otgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:13px}
+.otgrid .label{display:block;font-size:11px;margin-bottom:2px;font-family:Inter,sans-serif}
+.otmeta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--mu)}.otmeta b{color:var(--tx);font-weight:500}
+.range{position:relative;height:6px;border-radius:3px;margin:8px 0 0;background:linear-gradient(90deg,var(--dn) 0 var(--e),var(--up) var(--e) 100%)}
+.range .entry{position:absolute;left:var(--e);top:-4px;width:2px;height:14px;margin-left:-1px;background:var(--tx);border-radius:1px}
+.range .dot{position:absolute;left:var(--p);top:50%;width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px var(--sf);transform:translate(-50%,-50%);animation:slide .5s cubic-bezier(.2,.7,.2,1) .2s both}
+@keyframes slide{from{left:var(--e)}to{left:var(--p)}}
+details.note summary{cursor:pointer;color:var(--mu);font-size:12px;list-style:none}
+details.note summary::before{content:"▸ ";color:var(--fa)}details.note[open] summary::before{content:"▾ "}
+details.note p{margin:6px 0 0;font-size:12px;color:var(--mu);line-height:1.5}
+@media(max-width:900px){.chartbox{height:220px!important}.kpis>:last-child:nth-child(odd){grid-column:1/-1}td.wrapc{min-width:260px}}
+</style></head>
+<body><header class="hdr"><div class="wrap"><div class="brand"><span class="logo" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l4-4 3 3 5-6"/><path d="M10 5h4v4"/></svg></span><h1>Trading Desk</h1><span class="badge" title="Paper trading only. No real orders.">PAPER</span><span class="upd">Updated 2:47 PM AWST · Sat 10 Oct 2026<span class="long"> · from paper-ledger.csv</span></span></div><nav class="tabs" aria-label="Dashboards"><a href="index.html" aria-current=page>Live</a><a href="backtest.html">Backtest</a></nav></div></header><main class="wrap"><div class="grid"><section class="card s4 fade" style="--i:1"><div class="label">Paper balance</div>
+<div class="hero num" data-to="10000.00" data-fmt="money">$10,000.00</div>
+<div class="neu num" style="font-size:14px;font-weight:600">± 0.00% <span class="muted" style="font-weight:400">vs $10,000 start</span></div>
+<div class="faint" style="font-size:12px;margin-top:14px">Realized ± $0.00 · Unrealized ± $0.00</div></section><div class="s8 kpis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px"><div class="card fade" style="--i:2"><div class="label">Realized P&amp;L</div><div class="kpi num neu" data-to="0.00" data-fmt="smoney">± $0.00</div><div class="muted" style="font-size:12px;margin-top:4px">0 closed trades</div></div><div class="card fade" style="--i:3"><div class="label">Unrealized P&amp;L</div><div class="kpi num neu" data-to="0.00" data-fmt="smoney">± $0.00</div><div class="muted" style="font-size:12px;margin-top:4px">1 open · marked from ledger</div></div><div class="card fade" style="--i:4"><div class="label">Win rate</div><div style="display:flex;align-items:center;gap:12px;margin-top:6px"><svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="flex:none"><circle cx="20" cy="20" r="15" fill="none" stroke="#232D3A" stroke-width="4"/><circle class="ringv" cx="20" cy="20" r="15" fill="none" stroke="#232D3A" stroke-width="4" stroke-linecap="round" stroke-dasharray="0.00 94.25" transform="rotate(-90 20 20)"/></svg><div class="kpi num" style="margin:0" >—</div></div><div class="muted" style="font-size:12px;margin-top:4px">No closed trades yet</div></div><div class="card fade" style="--i:5"><div class="label">Avg win vs loss</div><div class="kpi num" style="font-size:20px;margin-top:10px"><span class="pos">—</span><span class="faint"> / </span><span class="neg">—</span></div><div class="muted" style="font-size:12px;margin-top:4px">Ratio appears after a win and a loss</div></div><div class="card fade" style="--i:6"><div class="label">Trades</div><div class="kpi num" data-to="1" data-fmt="int">1</div><div class="muted" style="font-size:12px;margin-top:4px">1 open · 0 closed · 4 passed</div></div></div></div>
+<div class="grid sec"><section class="card s8 fade" style="--i:7;display:flex;flex-direction:column">
+<div class="sechead" style="margin-bottom:8px"><h3>Paper balance over time</h3><span class="sub">Dashed line: $10,000 start</span></div>
+<div class="chart-note"><span class="dotn"></span>No closed trades yet. The curve starts moving once a paper trade closes.</div>
+<div class="chartbox" style="position:relative;height:320px">
+<canvas id="bal" aria-label="Paper balance over time" role="img"></canvas>
+</div></section><section class="s4" style="display:flex;flex-direction:column;gap:16px;min-width:0"><div class="sechead" style="margin:0"><h3>Open trades</h3><span class="sub">1 open</span></div><article class="card otc fade" style="--i:8">
+<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:16px;font-weight:700">STRK</span><span class="chip long">LONG</span>
+<span class="mono faint" style="font-size:12px">#L002</span><span class="chip warn" title="Fill price pending confirmation">Fill pending</span></div>
+<div class="otgrid mono"><div><span class="label">Entry</span>0.0730</div><div><span class="label">Stop</span><span class="neg">0.0680</span></div><div><span class="label">Target</span><span class="pos">0.0830</span></div></div>
+<div class="range" style="--e:33.33%;--p:33.33%" role="img" aria-label="At entry · 0% of the way to target"><span class="entry"></span><span class="dot"></span></div><div style="display:flex;justify-content:space-between;font-size:11px;margin-top:-4px" class="mono"><span class="neg">SL 0.0680</span><span class="pos">TP 0.0830</span></div><div style="font-size:12px;color:var(--tx);margin-top:-6px">At entry · 0% of the way to target</div>
+<div class="otmeta"><span>Size <b class="mono">$250</b></span><span>Risk <b class="mono">$17.12</b></span><span>R:R <b class="mono">2.0</b></span><span>Unrealized <b class="mono neu">± $0.00</b></span></div>
+<div class="faint" style="font-size:11px;margin-top:2px">No mark yet, so the dot sits at entry. Opened 2026-10-10.</div>
+<details class="note"><summary>Desk note</summary><p>PAPER BUY by Yong Sen at 13:47 AWST on Skeptic REDUCE terms (0.0730 limit). Binance price at 13:47 AWST was 0.0709, below the limit; Charts says the fill would be ~0.0710. Fill price pending Yong Sen confirmation. Off watchlist. 15 Oct unlock of ~127M STRK falls inside the hold.</p></details>
+</article></section></div>
+<section class="sec"><div class="sechead"><h2>Closed trades</h2><span class="sub">0 closed · R = P&amp;L ÷ planned risk</span></div><div class="card"><div class="empty"><div class="ico">☰</div><b>No closed trades yet</b><p>Each closed paper trade shows up here with its lead ID, R multiple and P&amp;L. Win rate and average win vs loss fill in from these.</p></div></div></section>
+<section class="sec" style="opacity:.92"><div class="sechead"><h2>Passed ideas</h2><span class="sub">4 reject · 0 skip · most of the job is passing</span></div><div class="tbl muted-tbl"><div class="scroll"><table><thead><tr><th>Lead</th><th>Ticker</th><th>Verdict</th><th>Date</th><th>Reason</th></tr></thead><tbody><tr><td class="mono">#L001</td><td class="tk"><b>KAIA</b></td><td><span class="chip reject">Reject</span></td><td class="mono">2026-10-10</td><td class="wrapc">Skeptic REJECT: +62.3% on 13.7x vol right after the Upbit listing looks like sell-the-news; heavy Telegram signal spam and new accounts posting profit claims. Ref $0.0610 (Scout, CoinGecko 09:52 AWST).</td></tr><tr><td class="mono">#L004</td><td class="tk"><b>TMUS</b></td><td><span class="chip reject">Reject</span></td><td class="mono">2026-10-10</td><td class="wrapc">Skeptic REJECT: falling knife at a fresh 1-year low with no support in the data; Charts found no setup. Ref $148.58, -13.3% (Scout, Yahoo).</td></tr><tr><td class="mono">#L005</td><td class="tk"><b>ASTS</b></td><td><span class="chip reject">Reject</span></td><td class="mono">2026-10-10</td><td class="wrapc">Skeptic REJECT: counter-trend after losing the spectrum to SpaceX; the Roth $108 target came before the news; heavy pump-group hype. Ref $50.97, -10.5% (Scout, Yahoo).</td></tr><tr><td class="mono">#TEST</td><td class="tk"><b>AAPL</b></td><td><span class="chip reject">Reject</span></td><td class="mono">2026-10-10</td><td class="wrapc">Test lead with no Scout ID. Skeptic REJECT: &#x27;$500 buyout tomorrow&#x27; X rumor had no source, no 8-K and no posts repeating it. Ref close $336.64, -1.11% (Scout, Yahoo).</td></tr></tbody></table></div></div></section><footer><span class="badge">PAPER</span><span>Paper trading only. No real orders are placed. Source: desk/paper-ledger.csv.</span><span style="margin-left:auto">Page refreshes every 5 minutes · Built 2:47 PM AWST · Sat 10 Oct 2026</span></footer></main>
+<script>
+const RM=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt={
+ money:v=>'$'+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),
+ smoney:v=>Math.abs(v)<0.005?'± $0.00':(v>0?'▲ +$':'▼ −$')+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),
+ spct:v=>Math.abs(v)<0.005?'± 0.00%':(v>0?'▲ +':'▼ −')+Math.abs(v).toFixed(2)+'%',
+ pct0:v=>Math.round(v)+'%',
+ int:v=>String(Math.round(v)),
+ x:v=>v.toFixed(2)+'×'
+};
+function countUp(){
+ if(RM)return;
+ document.querySelectorAll('[data-to]').forEach(el=>{
+  const to=parseFloat(el.dataset.to),f=fmt[el.dataset.fmt]||fmt.int,final=el.textContent,t0=performance.now(),d=600;
+  if(!isFinite(to)||to===0)return;
+  const step=t=>{const k=Math.min(1,(t-t0)/d),e=1-Math.pow(1-k,4);el.textContent=f(to*e);if(k<1)requestAnimationFrame(step);else el.textContent=final;};
+  requestAnimationFrame(step);
+ });
+}
+function chartDefaults(){
+ if(!window.Chart)return false;
+ Chart.defaults.color='#8B98A9';Chart.defaults.font.family="Inter,system-ui,sans-serif";Chart.defaults.font.size=11;
+ Chart.defaults.borderColor='#1C2430';
+ return true;
+}
+const TOOLTIP={backgroundColor:'#18202B',borderColor:'#232D3A',borderWidth:1,cornerRadius:8,padding:10,titleColor:'#E6EDF3',bodyColor:'#E6EDF3',
+ titleFont:{family:'Inter',weight:'600',size:12},bodyFont:{family:"'JetBrains Mono',monospace",size:12},boxPadding:4,usePointStyle:true};
+document.addEventListener('DOMContentLoaded',countUp);
 
-</main><script>
-const C=(id,d,c)=>new Chart(document.getElementById(id),{type:'line',data:{labels:d.map(x=>x[0]),datasets:[{data:d.map(x=>x[1]),borderColor:c,tension:.2,pointRadius:3}]},options:{plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8a8f98'}},y:{ticks:{color:'#8a8f98'}}}}});
-C('bal',[["start", 10000.0], ["now (incl. open)", 10000.0]],'#4ea1ff');
+const CURVE=[["Start", 10000.0], ["Now", 10000.0]];
+if(chartDefaults()){
+ const ctx=document.getElementById('bal');
+ const vals=CURVE.map(x=>x[1]);const lo=Math.min(10000,...vals),hi=Math.max(10000,...vals),pad=Math.max((hi-lo)*0.15,50);
+ new Chart(ctx,{type:'line',data:{labels:CURVE.map(x=>x[0]),datasets:[
+  {label:'Balance',data:vals,borderColor:'#4F8CFF',borderWidth:2,tension:.25,pointRadius:0,pointHoverRadius:4,pointHoverBackgroundColor:'#4F8CFF',fill:true,
+    backgroundColor:c=>{const a=c.chart.chartArea;if(!a)return 'rgba(79,140,255,.18)';const g=c.chart.ctx.createLinearGradient(0,a.top,0,a.bottom);g.addColorStop(0,'rgba(79,140,255,.18)');g.addColorStop(1,'rgba(79,140,255,0)');return g;}},
+  {label:'Start',data:vals.map(()=>10000),borderColor:'#5B6878',borderWidth:1,borderDash:[4,4],pointRadius:0,pointHoverRadius:0,fill:false}]},
+ options:{responsive:true,maintainAspectRatio:false,animation:RM?false:{duration:600,easing:'easeOutQuart'},
+  interaction:{mode:'index',intersect:false},
+  plugins:{legend:{display:false},tooltip:{...TOOLTIP,filter:i=>i.datasetIndex===0,callbacks:{label:i=>' '+fmt.money(i.parsed.y)+'  '+fmt.smoney(i.parsed.y-10000)}}},
+  scales:{x:{grid:{display:false},border:{color:'#232D3A'},ticks:{color:'#8B98A9',font:{size:11},maxTicksLimit:6,maxRotation:0}},
+   y:{min:Math.floor(lo-pad),max:Math.ceil(hi+pad),grid:{color:'#1C2430'},border:{display:false},ticks:{color:'#8B98A9',font:{size:11},maxTicksLimit:6,callback:v=>'$'+Number(v).toLocaleString('en-US')}}}}});
+}
 </script></body></html>

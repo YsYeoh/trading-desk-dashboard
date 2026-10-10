@@ -1,0 +1,182 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="300">
+<meta name="color-scheme" content="dark"><meta name="theme-color" content="#0B0F14">
+<title>Trading Desk · Backtest</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script><style>
+:root{--bg:#0B0F14;--sf:#121821;--sf2:#18202B;--bd:#232D3A;--bdh:#2E3A4A;--grid:#1C2430;--tx:#E6EDF3;--mu:#8B98A9;--fa:#5B6878;--ac:#4F8CFF;
+--up:#22C55E;--upt:#4ADE80;--dn:#F04452;--dnt:#FF6B78;--warn:#F5A524;--neu:#64748B;
+--upbg:rgba(34,197,94,.12);--dnbg:rgba(240,68,82,.12);--warnbg:rgba(245,165,36,.12);
+--sA:#4F8CFF;--sB:#A78BFA;--sC:#22D3EE;--sD:#F5A524}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--ac);text-decoration:none}a:hover{text-decoration:underline}
+.num,.mono{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;font-feature-settings:"tnum";font-variant-numeric:tabular-nums}
+.wrap{max-width:1280px;margin:0 auto;padding:24px}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
+.s3{grid-column:span 3}.s4{grid-column:span 4}.s6{grid-column:span 6}.s8{grid-column:span 8}.s12{grid-column:span 12}
+.label{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mu);font-weight:500}
+.muted{color:var(--mu)}.faint{color:var(--fa)}
+.pos{color:var(--upt)}.neg{color:var(--dnt)}.neu{color:var(--mu)}
+h1{font-size:16px;font-weight:600;margin:0;letter-spacing:-.005em}
+h2{font-size:20px;font-weight:600;margin:0;letter-spacing:-.01em}
+h3{font-size:16px;font-weight:600;margin:0}
+/* header */
+.hdr{position:sticky;top:0;z-index:50;background:rgba(18,24,33,.72);-webkit-backdrop-filter:saturate(140%) blur(12px);backdrop-filter:saturate(140%) blur(12px);border-bottom:1px solid var(--bd)}
+.hdr .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:12px;padding-bottom:12px}
+.brand{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0}
+.logo{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#4F8CFF,#A78BFA);display:grid;place-items:center;flex:none}
+.logo svg{width:16px;height:16px}
+.upd{font-size:12px;color:var(--mu);white-space:nowrap}
+.badge{font:600 11px/1 Inter,sans-serif;letter-spacing:.08em;padding:4px 8px;border-radius:999px;border:1px solid var(--warn);color:var(--warn);background:var(--warnbg)}
+.tabs{display:flex;background:var(--sf2);border:1px solid var(--bd);border-radius:10px;padding:3px;flex:none}
+.tabs a{padding:6px 14px;border-radius:7px;color:var(--mu);font-weight:500;font-size:13px;transition:color .15s,background .15s;text-decoration:none}
+.tabs a:hover{color:var(--tx)}
+.tabs a[aria-current=page]{background:var(--sf);color:var(--tx);box-shadow:inset 0 0 0 1px var(--bd)}
+/* cards */
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:18px;transition:border-color .15s;min-width:0}
+.card:hover{border-color:var(--bdh)}
+.fade{animation:up .45s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0) * 40ms)}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.sec{margin-top:28px}
+.sechead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.sechead .sub{font-size:13px;color:var(--mu)}
+.kpi{font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.15;margin-top:6px;white-space:nowrap}
+.hero{font-size:40px;font-weight:700;letter-spacing:-.03em;line-height:1.1;margin:8px 0 6px}
+.chip{display:inline-flex;align-items:center;gap:6px;font:600 11px/1 Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:5px 8px;border-radius:999px;border:1px solid var(--bd);color:var(--mu);white-space:nowrap}
+.chip.long{color:var(--upt);border-color:rgba(34,197,94,.45);background:var(--upbg)}
+.chip.short{color:var(--dnt);border-color:rgba(240,68,82,.45);background:var(--dnbg)}
+.chip.reject{color:var(--dnt);border-color:var(--dn);background:transparent}
+.chip.skip{color:var(--mu);border-color:var(--neu);background:transparent}
+.chip.warn{color:var(--warn);border-color:rgba(245,165,36,.5);background:var(--warnbg)}
+.chip.is{color:var(--mu);border-color:var(--neu)}
+.chip.oos{color:var(--ac);border-color:rgba(79,140,255,.5);background:rgba(79,140,255,.10)}
+/* tables */
+.tbl{position:relative;border:1px solid var(--bd);border-radius:14px;background:var(--sf);overflow:hidden}
+.tbl .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{position:sticky;top:0;background:var(--sf2);color:var(--mu);font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;text-align:left;padding:10px 14px;white-space:nowrap;border-bottom:1px solid var(--bd)}
+td{height:40px;padding:8px 14px;border-bottom:1px solid var(--grid);vertical-align:middle;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+tbody tr{transition:background .15s}
+tbody tr:hover td{background:var(--sf2)}
+td.r,th.r{text-align:right}
+td.wrapc{white-space:normal;min-width:320px;color:var(--mu);line-height:1.45}
+tr.win td:first-child{box-shadow:inset 2px 0 0 var(--up)}
+tr.loss td:first-child{box-shadow:inset 2px 0 0 var(--dn)}
+.muted-tbl td{color:var(--mu)}.muted-tbl td.tk{color:var(--tx)}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:36px 20px;color:var(--mu)}
+.empty .ico{width:40px;height:40px;border-radius:12px;background:var(--sf2);border:1px solid var(--bd);display:grid;place-items:center;margin-bottom:6px}
+.empty b{color:var(--tx);font-weight:600;font-size:14px}
+.empty p{margin:0;max-width:420px;font-size:13px}
+footer{margin-top:36px;padding:20px 0 8px;border-top:1px solid var(--bd);display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--fa);font-size:12px}
+@media(max-width:900px){
+ .wrap{padding:16px}
+ .s3,.s4,.s6,.s8,.s12{grid-column:1/-1}
+ .kpi{font-size:22px}.hero{font-size:32px}
+ .upd .long{display:none}
+ .tbl th:first-child,.tbl td:first-child{position:sticky;left:0;z-index:2;background:var(--sf)}
+ .tbl th:first-child{z-index:3;background:var(--sf2)}
+ .tbl tbody tr:hover td:first-child{background:var(--sf2)}
+ .tbl::after{content:"";position:absolute;top:0;right:0;bottom:0;width:28px;pointer-events:none;background:linear-gradient(90deg,rgba(18,24,33,0),var(--sf));border-radius:0 14px 14px 0}
+}
+@media(max-width:560px){
+ .hdr .wrap{flex-wrap:wrap;row-gap:8px}
+ .tabs{order:3;width:100%}.tabs a{flex:1;text-align:center}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{animation:none!important;transition:none!important}
+}
+
+.caveat{background:var(--warnbg);border:1px solid var(--warn);border-left-width:4px;border-radius:12px;padding:14px 16px;font-size:13px;color:var(--tx)}
+.caveat b{display:block;font-size:14px;margin-bottom:2px;color:var(--warn)}.caveat div{color:#D9C9A8}
+.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:8px;vertical-align:-1px;flex:none}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.schip{display:inline-flex;align-items:center;gap:2px;font:500 13px Inter,sans-serif;color:var(--tx);background:var(--sf2);border:1px solid var(--bd);border-radius:999px;padding:6px 12px;cursor:pointer;transition:color .15s,background .15s,border-color .15s,opacity .15s}
+.schip .sw{background:var(--c)}.schip b{margin-right:4px;color:var(--c)}
+.schip[aria-pressed=true]{border-color:var(--c);background:color-mix(in srgb,var(--c) 12%,transparent)}
+.schip[aria-pressed=false]{opacity:.5}.schip[aria-pressed=false] .sw{background:transparent;box-shadow:inset 0 0 0 1.5px var(--c)}
+.schip:focus-visible,.seg button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.seg{display:flex;background:var(--sf2);border:1px solid var(--bd);border-radius:10px;padding:3px}
+.seg button{font:500 12px Inter,sans-serif;color:var(--mu);background:none;border:0;border-radius:7px;padding:5px 12px;cursor:pointer;transition:color .15s,background .15s}
+.seg button[aria-pressed=true]{background:var(--sf);color:var(--tx);box-shadow:inset 0 0 0 1px var(--bd)}
+th.grp{text-align:center;border-bottom:1px solid var(--bd)}th.oosh{color:var(--ac)}
+td.best{background:rgba(79,140,255,.12);box-shadow:inset 0 0 0 1px rgba(79,140,255,.45);font-weight:600}
+td.faint2{opacity:.6}tr.off{opacity:.35}
+.rk{display:inline-block;width:18px;color:var(--fa)}
+.hero-ip{display:grid;grid-template-columns:1fr 1.2fr;gap:24px;align-items:center;padding:24px}
+.timeline{min-width:0}
+.tl-bar{display:flex;height:44px;border-radius:10px;overflow:hidden;border:1px solid var(--bd);margin-left:10%}
+.tl-bar>div{display:flex;align-items:center;padding:0 12px;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden}
+.tl-is{background:repeating-linear-gradient(135deg,#18202B 0 8px,#1C2430 8px 16px);color:var(--mu)}
+.tl-oos{background:rgba(79,140,255,.16);color:#9DBDFF;border-left:2px dashed #5B6878}
+.tl-ticks{position:relative;height:34px;margin-top:8px;font-size:11px;color:var(--mu)}
+.tl-ticks span{position:absolute;top:0;white-space:nowrap}.tl-ticks span:first-child{left:0}.tl-ticks i{font-style:normal;color:var(--fa);font-family:Inter,sans-serif}
+.facts{display:grid;grid-template-columns:max-content 1fr;gap:10px 16px;margin:14px 0 0;font-size:13px}
+.facts dt{color:var(--mu)}.facts dd{margin:0}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.step{display:grid;grid-template-columns:28px 1fr auto;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--grid)}.step:last-child{border-bottom:0}
+.dotc{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:600 12px 'JetBrains Mono',monospace;border:1px solid var(--bd);color:var(--mu);background:var(--sf2)}
+.step.done .dotc{background:var(--upbg);border-color:rgba(34,197,94,.5);color:var(--upt)}
+.step.now .dotc{border-color:var(--ac);color:var(--ac)}
+.step.todo{opacity:.7}
+@media(max-width:900px){.hero-ip{grid-template-columns:1fr}.chartbox{height:240px!important}.tl-bar{margin-left:0}.tl-ticks span:first-child{display:none}}
+@media(max-width:560px){.tl-bar>div{font-size:11px;padding:0 8px}.tl-bar>div span{overflow:hidden;text-overflow:ellipsis}}
+</style></head>
+<body><header class="hdr"><div class="wrap"><div class="brand"><span class="logo" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l4-4 3 3 5-6"/><path d="M10 5h4v4"/></svg></span><h1>Trading Desk</h1><span class="badge" title="Paper trading only. No real orders.">PAPER</span><span class="upd">Updated 2:47 PM AWST · Sat 10 Oct 2026<span class="long"> · from backtest/results</span></span></div><nav class="tabs" aria-label="Dashboards"><a href="index.html">Live</a><a href="backtest.html" aria-current=page>Backtest</a></nav></div></header><main class="wrap">
+<div class="caveat fade" style="--i:5"><b>Backtest in progress. No results yet.</b><div>This page fills in once the four strategies have run. Until then, nothing here is a result, and the old two-week test isn't shown because its universe included today's winners (hindsight).</div></div>
+<section class="card sec fade hero-ip" style="--i:6">
+<div><div class="label">One-month backtest plan</div><h2 style="font-size:28px;margin-top:6px;letter-spacing:-.02em">8 Sep – 8 Oct 2026</h2>
+<p class="muted" style="margin:6px 0 0;max-width:620px">Tune on the first half, then judge only on the second half. A fixed universe chosen before the window opens, the same gate as live, and real costs.</p></div>
+<div class="timeline" aria-label="In-sample 8 to 22 September, out-of-sample 23 September to 8 October">
+ <div class="tl-bar"><div class="tl-is" style="flex:15"><span>In-sample · tune</span></div><div class="tl-oos" style="flex:16"><span>Out-of-sample · evidence</span></div></div>
+ <div class="tl-ticks mono"><span>5 Sep<br><i>universe</i></span><span style="left:10%">8 Sep</span><span style="left:53.5%">23 Sep</span><span style="right:0;left:auto;text-align:right">8 Oct</span></div>
+</div></section>
+<div class="sec sechead"><h2>Four strategies</h2><span class="sub">Each one adds a single desk filter, so we can see which filter earns its keep</span></div>
+<div class="grid"><div class="card s3 fade" style="--i:1;border-top:3px solid #4F8CFF"><div style="display:flex;align-items:center;gap:8px"><span class="sw" style="background:#4F8CFF"></span><span class="mono" style="font-weight:600">A</span></div>
+<div style="font-weight:600;margin-top:8px">Scout screen + Charts levels</div><div class="muted" style="font-size:13px;margin-top:4px">Scout's live screen (≥5% move or ≥2× 30-day volume), entered on Charts' mechanical levels with a ≥2:1 R:R.</div></div><div class="card s3 fade" style="--i:2;border-top:3px solid #A78BFA"><div style="display:flex;align-items:center;gap:8px"><span class="sw" style="background:#A78BFA"></span><span class="mono" style="font-weight:600">B</span></div>
+<div style="font-weight:600;margin-top:8px">A + News REPORTED catalyst</div><div class="muted" style="font-size:13px;margin-top:4px">Only A signals where News found a REPORTED catalyst dated on or before entry.</div></div><div class="card s3 fade" style="--i:3;border-top:3px solid #22D3EE"><div style="display:flex;align-items:center;gap:8px"><span class="sw" style="background:#22D3EE"></span><span class="mono" style="font-weight:600">C</span></div>
+<div style="font-weight:600;margin-top:8px">A minus heavy hype</div><div class="muted" style="font-size:13px;margin-top:4px">A, dropping signals Sentiment scores as heavy hype using X posts from before entry.</div></div><div class="card s3 fade" style="--i:4;border-top:3px solid #F5A524"><div style="display:flex;align-items:center;gap:8px"><span class="sw" style="background:#F5A524"></span><span class="mono" style="font-weight:600">D</span></div>
+<div style="font-weight:600;margin-top:8px">Full desk gate</div><div class="muted" style="font-size:13px;margin-top:4px">B and C plus The Skeptic's gate: liquidity, $500 size, $100 max loss, 3 a day, 2% daily stop.</div></div></div>
+<div class="grid sec">
+<section class="card s6 fade" style="--i:7"><h3>Rules that apply to every strategy</h3>
+<dl class="facts">
+<dt>Window</dt><dd>Signals 8 Sep–8 Oct 2026</dd>
+<dt>In-sample</dt><dd>8–22 Sep · tuning allowed (lookbacks, max stop, R:R floor only)</dd>
+<dt>Out-of-sample</dt><dd>23 Sep–8 Oct · reported separately, the only number treated as evidence</dd>
+<dt>Universe</dt><dd>Fixed as of Fri 5 Sep: watchlist + top 30 US stocks and top 15 coins by 30-day dollar volume. No stocks under $5, no coins under 30 days old.</dd>
+<dt>Costs, stocks</dt><dd class="mono">0.1% slippage each way</dd>
+<dt>Costs, crypto</dt><dd class="mono">0.3% slippage + 0.1% fee each way</dd>
+<dt>Stops</dt><dd>Filled at the next bar's open, not at the stop price</dd>
+<dt>Sizing</dt><dd class="mono">$500 per trade · $100 max loss · start $10,000</dd>
+</dl></section>
+<section class="card s6 fade" style="--i:8"><h3>Pipeline</h3><p class="muted" style="font-size:13px;margin:4px 0 12px">Status is read from the files in <span class="mono">desk/backtest/</span> each time this page is built.</p><ol class="steps"><li class="step now"><span class="dotc">1</span><div><div style="font-weight:600">Universe fixed as of 5 Sep</div><div class="muted" style="font-size:12px">Scout · <span class="mono">universe.csv</span></div></div><span class="chip oos">Up next</span></li><li class="step todo"><span class="dotc">2</span><div><div style="font-weight:600">Signals 8 Sep–8 Oct</div><div class="muted" style="font-size:12px">Scout · <span class="mono">signals.csv</span></div></div><span class="chip skip">Waiting</span></li><li class="step todo"><span class="dotc">3</span><div><div style="font-weight:600">Levels per signal</div><div class="muted" style="font-size:12px">Charts · <span class="mono">levels.csv</span></div></div><span class="chip skip">Waiting</span></li><li class="step todo"><span class="dotc">4</span><div><div style="font-weight:600">News catalyst tags</div><div class="muted" style="font-size:12px">News · <span class="mono">news.csv</span></div></div><span class="chip skip">Waiting</span></li><li class="step todo"><span class="dotc">5</span><div><div style="font-weight:600">Hype scores (X, pre-entry)</div><div class="muted" style="font-size:12px">Sentiment · <span class="mono">sentiment.csv</span></div></div><span class="chip skip">Waiting</span></li><li class="step todo"><span class="dotc">6</span><div><div style="font-weight:600">Run 4 strategies</div><div class="muted" style="font-size:12px">Chief · <span class="mono">results/trades.csv</span></div></div><span class="chip skip">Waiting</span></li><li class="step todo"><span class="dotc">7</span><div><div style="font-weight:600">Method review</div><div class="muted" style="font-size:12px">The Skeptic · <span class="mono">results/summary.csv</span></div></div><span class="chip skip">Waiting</span></li></ol></section>
+</div><footer><span class="badge">PAPER</span><span>Backtest on paper. Simulated results, not real trades. Source: desk/backtest/results/.</span><span style="margin-left:auto">Page refreshes every 5 minutes · Built 2:47 PM AWST · Sat 10 Oct 2026</span></footer></main>
+<script>
+const RM=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt={
+ money:v=>'$'+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),
+ smoney:v=>Math.abs(v)<0.005?'± $0.00':(v>0?'▲ +$':'▼ −$')+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),
+ spct:v=>Math.abs(v)<0.005?'± 0.00%':(v>0?'▲ +':'▼ −')+Math.abs(v).toFixed(2)+'%',
+ pct0:v=>Math.round(v)+'%',
+ int:v=>String(Math.round(v)),
+ x:v=>v.toFixed(2)+'×'
+};
+function countUp(){
+ if(RM)return;
+ document.querySelectorAll('[data-to]').forEach(el=>{
+  const to=parseFloat(el.dataset.to),f=fmt[el.dataset.fmt]||fmt.int,final=el.textContent,t0=performance.now(),d=600;
+  if(!isFinite(to)||to===0)return;
+  const step=t=>{const k=Math.min(1,(t-t0)/d),e=1-Math.pow(1-k,4);el.textContent=f(to*e);if(k<1)requestAnimationFrame(step);else el.textContent=final;};
+  requestAnimationFrame(step);
+ });
+}
+function chartDefaults(){
+ if(!window.Chart)return false;
+ Chart.defaults.color='#8B98A9';Chart.defaults.font.family="Inter,system-ui,sans-serif";Chart.defaults.font.size=11;
+ Chart.defaults.borderColor='#1C2430';
+ return true;
+}
+const TOOLTIP={backgroundColor:'#18202B',borderColor:'#232D3A',borderWidth:1,cornerRadius:8,padding:10,titleColor:'#E6EDF3',bodyColor:'#E6EDF3',
+ titleFont:{family:'Inter',weight:'600',size:12},bodyFont:{family:"'JetBrains Mono',monospace",size:12},boxPadding:4,usePointStyle:true};
+document.addEventListener('DOMContentLoaded',countUp);
+</script></body></html>
